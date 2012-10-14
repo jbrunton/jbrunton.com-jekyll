@@ -1,13 +1,11 @@
-require "rack/jekyll"
+require 'bundler'
+Bundler.setup
+Bundler.require
+require 'rack/contrib/try_static'
 
-# The jekyll root directory
-root = ::File.dirname(__FILE__)
-
-# Middleware
-use Rack::ShowStatus      # Nice looking 404s and other messages
-use Rack::ShowExceptions  # Nice looking errors
-
-run Rack::URLMap.new( {
-  "/" => Rack::Directory.new( "public" ), # Serve our static content
-  "/" => Rack::Jekyll.new                 # Jekyll app
-} )
+use Rack::TryStatic, 
+    :root => "_site",  # static files root dir
+    :urls => %w[/],     # match all requests 
+    :try => ['.html', 'index.html', '/index.html'] # try these postfixes sequentially
+# otherwise 404 NotFound
+run lambda { [404, {'Content-Type' => 'text/html'}, ['whoops! Not Found']]}
