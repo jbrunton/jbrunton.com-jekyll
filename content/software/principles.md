@@ -66,3 +66,14 @@ function selectedItems(items) {
 }
 {% endhighlight %}
 
+The benefits are then:
+
+* We can reuse ```filter``` across other units of code.
+* Our implementation of ```selectedItems``` is clearer (as will be any other client sites of ```filter```).
+* We can test the two functions in isolation - and thus it will be easier to identify the nature of any test failures.
+
+## A Corollary: Design Patterns
+
+In light of this, it's interesting to note that use of design patterns sometimes introduces undesirable, incidental complexity to a codebase.  Sometimes this may be unavailable, and may be a reflection of the limits of the language being used.  But frequently it should be possible to make the use of design patterns more transparent by hiding them below more readable interfaces.
+
+We can at this point pause to consider an important differentiator between design patterns: whether or not they are introducing incidental complexity to a problem, because they are addressing the limits of the underlying language (e.g. the visitor pattern, acting as a poor man's multiple-dispatch - which is never needed in a language with pattern matching).  Contrast this with the MVC pattern, which serves as a pattern to structure an application in a logical, loosely coupled manner, and you can see these two patterns are in fact performing very different functions.
