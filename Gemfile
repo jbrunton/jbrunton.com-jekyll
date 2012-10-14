@@ -4,3 +4,4 @@ gem 'rack-contrib'
 gem 'heroku'
 gem 'shotgun', :group => :development
 gem 'rdiscount'
+gem 'pygmentize'

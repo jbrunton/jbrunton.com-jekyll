@@ -33,6 +33,7 @@ GEM
     mime-types (1.19)
     netrc (0.7.7)
     posix-spawn (0.3.6)
+    pygmentize (0.0.3)
     rack (1.4.1)
     rack-contrib (1.1.0)
       rack (>= 0.9.1)
@@ -50,6 +51,7 @@ PLATFORMS
 DEPENDENCIES
   heroku
   jekyll
+  pygmentize
   rack-contrib
   rdiscount
   shotgun
