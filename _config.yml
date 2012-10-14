@@ -1,0 +1,17 @@
+destination: _site
+permalink: /:year/:month/:day/:title
+markdown: rdiscount
+pygments: true
+
+foo: "foo"
+
+nav_links:
+    -
+        url: "/religion.html"
+        label: "Religion"
+    -
+        url: "/software.html"
+        label: "Software"
+    -
+        url: "/about.html"
+        label: "About Me"

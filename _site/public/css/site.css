@@ -1,0 +1,118 @@
+* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+p, h1, h2, h3, h4, h5 {
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    color: #333;
+    font-family: Georgia, "Times New Roman", Times, serif;
+    background-color: #E9E7E0;
+    margin: 0;
+    padding: 0;
+}
+
+a, a:active, a:link, a:visited, a:hover {
+    color: inherit;
+    text-decoration: none;
+}
+
+p {
+    font-size: 18px;
+    line-height: 29px;
+    text-align: justify;
+}
+
+.header {
+    background-color: #333;
+    position: fixed;
+    height: 40px;
+    top: 0;
+    left: 0;
+    right: 0;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, .6);
+    color: #EEE;
+}
+
+.header a:hover {
+    color: #FFF;
+}
+
+.header a.selected {
+    text-decoration: underline;
+}
+
+.header h3 {
+    float: left;
+}
+
+nav {
+    margin: 0 160px;
+}
+
+nav a {
+    margin: 0 10px;
+    text-transform: uppercase;
+    font-size: 13px;
+    float: right;
+}
+
+nav a:first-child {
+    margin-left: 0;
+    float: left;
+    font-size: auto;
+    text-transform: none;
+}
+
+.wrapper {
+    width: 960px;
+    margin: 0 auto;
+}
+
+.box {
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, .6);
+    background-color: #FFF;
+    margin: 40px 0 0 0;
+    padding: 30px 160px 0 160px;
+}
+
+.content {
+    padding: 10px 40px;
+}
+
+#profile-photo {
+    float: left;
+    width: 120px;
+    padding: 14px;
+    margin: 0 14px 14px 0;
+    border: solid 1px #DDD;
+}
+
+.box .content p {
+    margin: 0 0 29px 0;
+}
+
+.box .content h1, .box .content h2 {
+    margin: 0 0 29px 0;
+}
+
+.box .content a {
+    color: #888;
+}
+
+.box .content a:hover {
+    color: #666;
+}
+
+hr {
+    border: 1px solid #DDD;
+    height: 1px;
+    margin: 0 0 29px 0;
+}
+
+footer p {
+    text-align: center;
+    margin: 20px;
+    color: #888;
+}
