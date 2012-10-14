@@ -118,3 +118,11 @@ footer p {
     margin: 20px;
     color: #888;
 }
+
+footer p a.link {
+    color: #666;
+}
+
+footer p a.link:hover {
+    color: #AAA;
+}
