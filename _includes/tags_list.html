@@ -1,0 +1,5 @@
+{% for tag in tags_list %}
+    <span class="tag"><a href="/tag/{{ tag }}">{{ tag }}</a></span>
+{% endfor %}
+
+{% assign tags_list = nil %}

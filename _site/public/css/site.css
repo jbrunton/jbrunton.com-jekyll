@@ -1,5 +1,15 @@
 * { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
 
+.clearfix{
+    *zoom:1;
+}
+
+.clearfix:after{
+    clear:both;
+    content:"";
+    display:table;
+}
+
 p, h1, h2, h3, h4, h5 {
     margin: 0;
     padding: 0;
@@ -19,8 +29,8 @@ a, a:active, a:link, a:visited, a:hover {
 }
 
 p, li {
-    font-size: 18px;
-    line-height: 29px;
+    font-size: 16px;
+    line-height: 26px;
     text-align: justify;
 }
 
@@ -137,4 +147,8 @@ footer p a.link:hover {
     padding: 20px;
     border: solid 1px #DDD;
     background-color: #F6F6F6;
+}
+
+.tags .tag a {
+    margin: 0 10px;
 }

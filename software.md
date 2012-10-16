@@ -20,3 +20,7 @@ Also, here are some slides from presentations I've given on the subject of desig
 * [JavaScript Best Practices](https://speakerdeck.com/u/jbrunton/p/javascript-best-practices)
 * [Building Testable Large Scale Applications](https://speakerdeck.com/u/jbrunton/p/building-testable-large-scale-applications)
 
+### Posts related to Software Design:
+
+{% assign posts_list = site.tags['software design'] %}
+{% include posts_list.html %}

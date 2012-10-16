@@ -1,0 +1,7 @@
+<ul class="posts">
+{% for post in posts_list %}
+    <li><span id="date">{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
+{% endfor %}
+</ul>
+
+{% assign posts_list = nil %}
