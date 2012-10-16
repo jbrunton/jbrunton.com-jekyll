@@ -2,7 +2,7 @@
 layout: post
 title: Dependency Injection
 tags:
-    - software design
+    - Software Design
     - DI
 ---
 

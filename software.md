@@ -22,5 +22,5 @@ Also, here are some slides from presentations I've given on the subject of desig
 
 ### Posts related to Software Design:
 
-{% assign posts_list = site.tags['software design'] %}
+{% assign posts_list = site.tags['Software Design'] %}
 {% include posts_list.html %}

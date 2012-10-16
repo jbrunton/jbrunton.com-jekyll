@@ -138,7 +138,7 @@ footer p a.link:hover {
 }
 
 .highlight {
-    margin: 0 0 29px 20px;
+    margin: 0 0 29px 0;
     border-left: solid 4px #DDD;
     box-shadow: 3px 3px 8px rgba(192, 192, 192, .4);
     border-radius-bottom-left: 6px;
