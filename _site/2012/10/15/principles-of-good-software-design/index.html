@@ -49,18 +49,88 @@
 
 </p>
 
+<ul>
+<li><p>Complexity in software is perceived as the number
+of interacting elements within a software system, the
+internal structure of these elements, and the number
+and nature of interdependencies among them [R. Taylor, N. Medvidovic and E. Dashofy,  Software
+Architecture: Foundations, Theory and Practice,
+Hoboken, NJ: John Wiley &amp; Sons, 2009.]</p></li>
+<li><p>definition of complexity?</p>
+
+<ul>
+<li>variation - see 'SOFTWARE  COMPLEXITY  MEASUREMENT ' [http://sunnyday.mit.edu/16.355/kearney.pdf] and Wikipedia [http://en.wikipedia.org/wiki/Programming_complexity]</li>
+</ul>
+</li>
+<li>definition of incidental/accidental complexity?
+
+<ul>
+<li>several - maybe conflicting?
+
+<ul>
+<li>http://weblog.raganwald.com/2006/12/economizing-can-be-penny-wise-and.html</li>
+<li>'Relates to difficulties a programmer faces due to the chosen software engineering tools' [wiki]</li>
+<li>'readable codebase' [http://infiniteundo.com/post/19910636303/intrinsic-and-incidental-complexity]</li>
+</ul>
+</li>
+<li>consider what is most important to readability and maintainability: incidental <em>to the problem at hand</em>
+
+<ul>
+<li>BUT consider: over-abstracted nature of e.g. Java enterprise apps.  unnecessary generality or over-abstraction - how to defined?  too far removed from problem domain - introduces further incidental complexity (compare with the kind introduced by design patterns?).
+(  - what are the others?  are any others relevant?  maybe note distinct related types of incidental complexity.)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
 <p>Over the years I've tried to distil the ideas I've had which, in my opinion, underpin all good software design.  Irrespective of the language, framework or codebase you're working across, well designed code should always respect these principles:</p>
 
-<ol>
-<li><p>Each unit of code should solve one problem at a time.  (This can also be phrased as: avoid incidental complexity in application code in order to focus on solving the inherent complexity of the problem to hand.)</p></li>
-<li><p>Each problem should be solved only once.  (In other words: the <a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY</a> principle.)</p></li>
-<li><p>Code without tests is already broken.</p></li>
+<h2>1. Avoid incidental complexity.</h2>
+
+<p>Or, in full:</p>
+
+<blockquote><p>Avoid incidental complexity in application code in order to focus on solving the inherent complexity of the problem at hand.</p></blockquote>
+
+<p>http://weblog.raganwald.com/2006/12/economizing-can-be-penny-wise-and.html</p>
+
+<ul>
+<li>For code which is literally</li>
+</ul>
+
+
+<p>This can be stated in a few equivalent ways:</p>
+
+<blockquote><p>Each unit of code should solve one problem at a time</p></blockquote>
+
+<p>Each unit of code should solve one problem at a time.  (This can also be phrased as: avoid incidental complexity in application code in order to focus on solving the inherent complexity of the problem at hand.)</p>
+
+<blockquote><ol>
+<li>Each problem should be solved only once.</li>
 </ol>
+</blockquote>
 
+<p>In other words: the <a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY</a> principle.)</p>
 
-<h2>Divide &amp; Conquer</h2>
+<blockquote><ol>
+<li>Code without tests is already broken.</li>
+</ol>
+</blockquote>
 
-<p>The last two of these principles (write DRY code and write tests) have been well understood by the software community for a long time.  The first is a little more subtle, and I'm not aware of a catchy name for the principle, so I'll refer to it colloquially as "divide and conquer".</p>
+<p>Or at least, it will be soon.</p>
+
+<h2>Avoiding incidental complexity</h2>
+
+<p>The last two of these principles (write DRY code and write tests) have been well understood by the software community for a long time.</p>
+
+<p>The first is a little more subtle, and I'm not aware of a catchy name for the principle, so I'll refer to it as: "avoid incidental complexity".</p>
+
+<ul>
+<li>explain what it means</li>
+<li>explain equivalence.</li>
+</ul>
+
 
 <p>In effect, what it says is that clear, maintainable software should avoid polluting a unit of code with "noise" - all the code should be concerned with solving the problem at hand, rather than the incidental quirks of the particular implementation.</p>
 
@@ -68,6 +138,8 @@
 - likely to be reused in future - and more likely to be reusable if a general interface is defined (e.g. having a filter function, as opposed to iteration and boolean check)
 - likely to be more testable - by factoring out such code, you can test it in isolation (and this provide better code coverage which will flag problems more directly)
 - clarity - break down the problem into individual components and solve them individually</p>
+
+<p>clearly decomposing our code into distinct solutions to well-defined problems.  thus, each can be written, tested, generalized and reasoned about individually.  this is the crux of making code maintainable and refactorable, and also helps us strike the right balance between how much to refactor right now: the answer is in fact to ensure separation between problems in the first place, each of which can then be generalized, and commonalities factored out, in isolation.</p>
 
 <p>For example, consider this JavaScript function:</p>
 
@@ -120,7 +192,8 @@
 <ul>
 <li>We can reuse <code>filter</code> across other units of code.</li>
 <li>Our implementation of <code>selectedItems</code> is clearer (as will be any other client sites of <code>filter</code>).</li>
-<li>We can test the two functions in isolation - and thus it will be easier to identify the nature of any test failures.</li>
+<li><p>We can test the two functions in isolation - and thus it will be easier to identify the nature of any test failures.</p></li>
+<li><p>one of the skills a good engineer should acquire is seeing how to decompose a problem into its component parts.  this is why some exposure to functional programming can be useful: it helps one see how to literally compose functions.</p></li>
 </ul>
 
 
@@ -137,6 +210,8 @@
     <ul class="posts">
 
     <li><span id="date">16 Oct 2012</span> &raquo; <a href="/2012/10/16/dependency-injection">Dependency Injection</a></li>
+
+    <li><span id="date">14 Oct 2012</span> &raquo; <a href="/2012/10/14/software-complexity">Principles of Good Software Design</a></li>
 
 </ul>
 
