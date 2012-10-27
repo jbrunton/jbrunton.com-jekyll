@@ -1,32 +1,71 @@
 ---
 layout: post
-title: Principles of Good Software Design
+title: Avoid Incidental Complexity
 tags:
     - Software Design
     - Software Complexity
     - Incidental Complexity
 ---
 
-It's a well understood precept that well written software should avoid unnecessary complexity - but formally defining the kinds of complexity we seek to avoid is difficult, so how should we set about recognizing code which is in need of simplification?
+It's a well understood precept that well written software should avoid unnecessary complexity - but formally defining the kinds of complexity we seek to avoid is difficult. How, then, should we set about identifying code which is overly complex; and how can we improve it?
 
-## (Trying) To Define Complexity
+## Defining Complexity
 
-There are plenty of definitions for complexity to choose from.  A quick Google reveals quite a number:
+There are plenty of definitions for complexity to choose from.  Here's one which seems intuitive:
 
-...formal definitions...
+> Complexity in software is perceived as the number of interacting elements within a software system, the internal structure of these elements, and the number and nature of interdependencies among them
 
-But how useful are these definitions?
+> <cite>R. Taylor, N. Medvidovic and E. Dashofy,  *Software Architecture: Foundations, Theory and Practice*, Hoboken, NJ: John Wiley & Sons, 2009.</cite>
 
+...
 
+There are also metrics available to help us measure the complexity of our programs.
+
+...
+
+But how useful are these definitions in practice?  Is it really useful to put a figure on the complexity of your application?  It's probably clear that your multi-platform web service (complete with mobile apps) has a high degree of complexity than the rake task which deploys it - but how does that help you structure it better?  What's needed instead are some rules of thumb to help us identify code which we should simplify to achieve greater clarity or robustness.
 
 ## Incidental Complexity
 
-There's another way we can categorize complexity, however.  Wikipedia also highlights the distinction between incidental (or accidental) and inherent (or essential) complexity:
+Here's another way we can categorize complexity - by making the distinction between incidental (or accidental) and inherent (or essential) complexity:
 
 > Accidental complexity: Relates to difficulties a programmer faces due to the chosen software engineering tools. A better fitting set of tools or a more high-level programming language may reduce it.
-Essential complexity: Is caused by the characteristics of the problem to be solved and cannot be reduced.
 
-In my opinion, this isn't general enough.  Plenty of code features incidental complexity - i.e. that which is not inherent to solving the problem at hand.
+> Essential complexity: Is caused by the characteristics of the problem to be solved and cannot be reduced.
+
+<cite>Wikipedia</cite>
+
+In my opinion, this isn't general enough.  Plenty of code features incidental complexity (i.e. that which is not inherent to solving the problem at hand) due to the way it's been written.  Consider this example:
+
+{% highlight javascript %}
+function selectedItems(items) {
+    var results = [];
+    for (var k = 0; k < items.length; ++k) {
+        if (items[k].selected()) {
+            results.push(items);
+        }
+    }
+    return results;
+}
+{% endhighlight %}
+
+{% highlight javascript %}
+function filter(items, predicate) {
+    var results = [];
+    for (var k = 0; k < items.length; ++k) {
+        if (predicate(items[k])) {
+            results.push(items);
+        }
+    }
+    return results;
+}
+
+function selectedItems(items) {
+    return filter(items, function(item) {
+        return item.selected();
+    });
+}
+{% endhighlight %}
 
 In a blog post, Peter Rosser describes a related kind of complexity:
 

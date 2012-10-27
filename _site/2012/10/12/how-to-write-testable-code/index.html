@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>How To Write Testable Code - jbrunton.com</title>
+        <link href="/public/css/site.css" rel="stylesheet" type="text/css" />
+        <link href="/public/css/pygments.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <div class="header">
+            <div class="wrapper">
+                <div class="content">
+                    <nav>
+                        <a id="home" href="/">
+                            <h3>jbrunton.com</h3>
+                        </a>
+                        
+                            
+                                <a href="/religion.html">Religion</a>
+                            
+                        
+                            
+                                <a href="/software.html">Software</a>
+                            
+                        
+                            
+                                <a href="/about.html">About Me</a>
+                            
+                        
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <div class="wrapper">
+            <div class="box">
+                <div class="content">
+                    <h1>How To Write Testable Code</h1>
+
+<p class="tags"> Tags:
+    
+    
+    <span class="tag"><a href="/tag/Software%20Design">Software Design</a></span>
+
+    <span class="tag"><a href="/tag/Unit%20Tests">Unit Tests</a></span>
+
+
+
+
+</p>
+
+<p>Three rules of thumb for writing testable code.</p>
+
+<h2>1. Solve each problem in isolation</h2>
+
+<p>In OOP terms, avoid <a href="http://en.wikipedia.org/wiki/God_object">God classes</a>.  In functional terms, prefer small, composable functions to the implementation of lengthy and complicated ones.  Whatever paradigm you're working with: each unit of code should solve one problem.</p>
+
+<p>The reason for this is simple: god classes (or god functions) are "black box" objects.  They either work or they don't, but the component pieces of their implementations are hidden from site, so can't be tested.  (Neither can they be <a href="TODO:%20link%20to%20blog">reused or easily reasoned about</a>, but that's not the criticism we're concerned about here.)</p>
+
+<p>In order to provide good test coverage, we have to be able to test the component pieces of our application</p>
+
+<ol>
+<li>Avoid singletons/monads</li>
+</ol>
+
+
+<p>This is required in order that we can <a href="TODO:%20link">write atomic tests</a>.</p>
+
+<p>describe "window.app", -></p>
+
+<pre><code>it "does this one thing when initialized", -&gt;
+    app.init()
+    expect(app.one_thing).toBe(whatever)
+
+it "does this other thing when initialized", -&gt;
+    app.init() # already initialized
+    expect(app.other_thing).toBe(whatever)
+</code></pre>
+
+<p>What happens if we try to initialize the application object twice?  It might be safe.  It might error.  It might leave the object in an invalid state.  We can't be sure, so our second test might fail just because our init() method isn't idempotent (rather than because of a genuine bug).</p>
+
+<p>Better to be able to instantiate an application for each test:</p>
+
+<p>describe "Application", -></p>
+
+<pre><code>beforeEach: -&gt;
+    app = new Application
+
+it "does this one thing when initialized", -&gt;
+    app.init()
+    expect(app.one_thing).toBe(whatever)
+
+it "does this other thing when initialized", -&gt;
+    app.init() # new instance - safe to initialize
+    expect(app.other_thing).toBe(whatever)
+</code></pre>
+
+<ol>
+<li>Make it easy to configure and run your test subjects</li>
+</ol>
+
+
+<p>What this typically comes down to is: write loosely coupled code, and be careful with how you specify dependencies.</p>
+
+<p>What you want to avoid is the situation where every test requires every dependency of the subject under test (SUT) to be explicitly replaced with some suitable test double.  For example, this is bad:</p>
+
+<pre><code>beforeEach: -&gt;
+    repository = new TestRepository
+    renderer = new TestRenderer        
+    # etc.
+
+    app = new Application(repository)
+
+it "is awkward to configure the environment for testing", -&gt;
+    app.run()
+</code></pre>
+
+<p>Code like this typically requires that every time you add a dependency to a class, first you have to locate all the feature tests which involve that class, and then add in suitable test doubles; and every time you write a new test, you have to figure out all of the dependencies across all of the classes involved, and ensure they're suitably mocked.  In other words, there's a tight coupling between each test and the dependencies of the subject under test (SUT) - not just with the SUT itself.</p>
+
+<p>In other words, our tests will become increasingly difficult to write and maintain as the complexity of our codebase grows.</p>
+
+<p>To avoid this, we should consider:</p>
+
+<ul>
+<li>Inversion of control and dependency injection patterns (see [TODO: link]).</li>
+<li>Some boilerplate code for our tests, to quickly and DRY-ly setup and tear down test subjects.</li>
+</ul>
+
+
+<p>What we want minimally is a way to structure our tests such that at most changes to underlying dependencies only effect a single piece of boilerplate code - and preferable, none of the test code at all.</p>
+
+
+<div id="related-posts">
+    <h3>Related Posts</h3>
+    
+    <ul class="posts">
+
+    <li><span id="date">16 Oct 2012</span> &raquo; <a href="/2012/10/16/dependency-injection">Why Dependency Injection Matters In Dynamic Languages</a></li>
+
+    <li><span id="date">15 Oct 2012</span> &raquo; <a href="/2012/10/15/principles-of-good-software-design">Principles of Good Software Design</a></li>
+
+    <li><span id="date">14 Oct 2012</span> &raquo; <a href="/2012/10/14/software-complexity">Avoid Incidental Complexity</a></li>
+
+    <li><span id="date">10 Oct 2012</span> &raquo; <a href="/2012/10/10/how-to-write-effective-unit-tests">How To Write Effective Unit Tests</a></li>
+
+</ul>
+
+
+
+</div>
+
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div class="wrapper footer-content">
+            asd
+            </div>
+            <p>Developed and designed by me.
+                <a class="link" target="_blank" href="https://twitter.com/JohnBrunton">@johnbrunton</a></p>
+        </footer>
+    </body>
+</html>

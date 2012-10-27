@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>jbrunton.com</title>
+        <title>Why Dependency Injection Matters In Dynamic Languages - jbrunton.com</title>
         <link href="/public/css/site.css" rel="stylesheet" type="text/css" />
         <link href="/public/css/pygments.css" rel="stylesheet" type="text/css" />
     </head>
@@ -33,21 +33,236 @@
         <div class="wrapper">
             <div class="box">
                 <div class="content">
-                    <h1>Dependency Injection</h1>
+                    <h1>Why Dependency Injection Matters In Dynamic Languages</h1>
 
 <p class="tags"> Tags:
     
     
     <span class="tag"><a href="/tag/Software%20Design">Software Design</a></span>
 
-    <span class="tag"><a href="/tag/DI">DI</a></span>
+    <span class="tag"><a href="/tag/Dependency%20Injection">Dependency Injection</a></span>
 
 
 
 
 </p>
 
-<h1>DI</h1>
+<p>One of the foundational principles of good software design is that code should be loosely coupled, and there are few better ways to achieve this in the world of object-oriented programming than with dependency injection (DI).  Typically implemented with a <em>dependency injection container</em> - an object which manages and resolves concrete dependencies for client classes - dependency injection allows classes to be written without tying them to any specific concrete types or instances.</p>
+
+<p>As a pattern, DI is well established in a number of frameworks for statically typed environments (such as Microsoft's <a href="http://unity.codeplex.com/">Unity</a> container for .NET applications, or the lightweight <a href="http://picocontainer.codehaus.org/">Picocontainer</a> for Java).  But do we really need to use the pattern in dynamic languages, such as JavaScript, when the concept of static types doesn't really apply?</p>
+
+<p>The answer is: almost definitely.  Let's take a look at the ways in which DI helps us write robust, loosely coupled applications.</p>
+
+<h2>1. Resolve concrete types at runtime</h2>
+
+<p>This is one of the most obvious benefits of a DI container in a statically typed language - the container is configured to map a particular interface to a specific concrete implementation at runtime.</p>
+
+<p>As an example, suppose we're writing a .NET application, and in order to abstract data access we have the following IDataRepository interface:</p>
+
+<div class="highlight"><pre><code class="csharp"><span class="k">public</span> <span class="k">interface</span> <span class="n">IDataRepository</span> <span class="p">{</span>
+    <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">IUser</span><span class="p">&gt;</span> <span class="n">users</span><span class="p">();</span>
+    <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">IAccount</span><span class="p">&gt;</span> <span class="n">accounts</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+
+<p>Our WPF client application might communicate with our server over some RESTful web services.  So we have an HttpRepository concrete implementation:</p>
+
+<div class="highlight"><pre><code class="csharp"><span class="k">public</span> <span class="k">class</span> <span class="nc">HttpRepository</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">IUser</span><span class="p">&gt;</span> <span class="n">users</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// makes a web request and returns the results</span>
+    <span class="p">}</span>
+    
+    <span class="k">public</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">IAccount</span><span class="p">&gt;</span> <span class="n">accounts</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// ditto</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+
+<p>We can now map the IDataRepository interface to the correct class at runtime when we configure the container:</p>
+
+<div class="highlight"><pre><code class="csharp"><span class="k">public</span> <span class="k">class</span> <span class="nc">Bootstrapper</span> <span class="n">extends</span> <span class="n">UnityBootstrapper</span> <span class="p">{</span>
+
+    <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">ConfigureContainer</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">base</span><span class="p">.</span><span class="n">ConfigureContainer</span><span class="p">();</span>
+    
+        <span class="k">this</span><span class="p">.</span><span class="n">RegisterTypeIfMissing</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">IDataRepository</span><span class="p">),</span>
+            <span class="k">typeof</span><span class="p">(</span><span class="n">HttpRepository</span><span class="p">));</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</code></pre>
+</div>
+
+
+<p>And now when we resolve an instance of IDataRepository, we'll get back an instance of HttpRepository, as required.  If we want to configure the container differently for a server application (to map to an OracleRepository, say), then it's one line of code to change.</p>
+
+<p>Obviously this advantage is only relevant to statically typed languages, so we see no benefit here when using dynamic languages.</p>
+
+<h2>2. Delegate configuration of the container to the appropriate unit of code.</h2>
+
+<p>Without dependency injection, every time you add a dependency to a class you have to locate all the feature tests which involve that class in some way and add in suitable test doubles; and every time you write a new test, you have to figure out all of the dependencies across all of the classes involved, and ensure they're suitably mocked.  In other words, there's a tight coupling between each test and the dependencies of the subject under test (SUT) - not just with the SUT itself.  Here's an example of what I mean:</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">describe</span> <span class="s2">&quot;Application&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+
+    <span class="n">beforeEach</span><span class="p">:</span> <span class="o">-&gt;</span>
+        <span class="n">repository</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">TestRepository</span>
+        <span class="n">renderer</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">TestRenderer</span>        
+        <span class="c1"># etc.</span>
+        
+        <span class="n">app</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">Application</span><span class="p">(</span><span class="n">repository</span><span class="p">)</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;is awkward to configure the environment for testing&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre>
+</div>
+
+
+<p>If we adopt this approach, our tests will become increasingly difficult to write and maintain as the complexity of our codebase grows.</p>
+
+<p>A better approach is to delegate configuration of the container to individual application modules.  Here's an example:</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">RepositoryModule</span>
+
+    <span class="n">configure_container</span><span class="p">:</span> <span class="p">(</span><span class="n">container</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span> <span class="o">-&gt;</span>
+        <span class="k">if</span> <span class="n">env</span> <span class="o">==</span> <span class="s2">&quot;production&quot;</span>
+            <span class="n">container</span><span class="o">.</span><span class="n">register_class</span> <span class="s2">&quot;DataRepository&quot;</span><span class="p">,</span> <span class="no">HttpRepository</span>
+        <span class="k">else</span>
+            <span class="n">container</span><span class="o">.</span><span class="n">register_class</span> <span class="s2">&quot;DataRepository&quot;</span><span class="p">,</span> <span class="no">MemoryRepository</span>
+</code></pre>
+</div>
+
+
+<p>Now, if we implement our application to configure each module before initializing it, we can boot up our application</p>
+
+<p>And now, to configure and run our entire application for testing, our code is as simple as this:</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">beforeEach</span><span class="p">:</span> <span class="o">-&gt;</span>
+    <span class="n">bootstrapper</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">Bootstrapper</span><span class="p">(</span> <span class="n">mode</span><span class="p">:</span> <span class="s2">&quot;test&quot;</span> <span class="p">)</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="kp">new</span> <span class="n">application</span>
+    
+<span class="n">define</span> <span class="s2">&quot;Application&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+
+    <span class="n">it</span> <span class="s2">&quot;is really easy to run in a test environment&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">bootstrapper</span><span class="p">)</span>
+</code></pre>
+</div>
+
+
+<p>This removes the coupling between our tests and the dependencies of the SUT - which allows us to write much more robust and succinct tests.</p>
+
+<h2>3. Remove dependencies on multiplicity of a class.</h2>
+
+<p>Do we want our data source to be shared across the entire application?  Do we want each client unit of code to instantiate its own instance?  Often, the answer is contextual: we might want to share a database connection for performance reasons in one application; but we might want to create a new repository each time we need data access in another, in order to avoid stale data in our repository class.</p>
+
+<p>If we use dependency injection, then clients of our data repository don't have to know for sure whether to instantiate a new instance, or whether to share an existing one.  If we wish to share an instance, we can configure our container to memoize the repository it resolves, so that the same instance will be returned on subsequent calls to resolve:</p>
+
+<pre><code>container.register_class "DataRepository", OracleRepository, singleton: true
+</code></pre>
+
+<p>This helps us further reduce dependencies in our code.  And removing this particular dependency is likely to help us write more robust tests as well - because it's awkward to test singletons or monad objects - and by removing the expectation that a particular dependency should always be a single instance, we can remove that requirement in tests as well.</p>
+
+<h2>4. Use different containers across a single application</h2>
+
+<p>It's often useful to be able to configure several distinct containers to resolve mappings differently across an application.  As an example, suppose we want each application module to keep its own open connection to the database.</p>
+
+<p>UsersModule</p>
+
+<pre><code>@dependency repository: "DataRepository"
+
+configure_container: (container) -&gt;
+        container.child().register_instance "DataRepository",
+            container.resolve "DataRepository"
+
+find: (id) -&gt;
+    @repository.find("user", id)
+</code></pre>
+
+<h2>5. Knowledge of how to build dependencies is delegated to</h2>
+
+<p>There are a few obvious benefits to resolving dependencies dynamically:</p>
+
+<ol>
+<li><p>For testing purposes we can configure our DI container to resolve mappings to <a href="http://www.martinfowler.com/bliki/TestDouble.html">test doubles</a> (i.e. stubs/mocks/spies/fake objects).</p></li>
+<li><p>If our code is to be reused across different platforms or frameworks, then we can configure our container appropriately for each.  For example, JavaScript code on the client might have a data repository configured to make HTTP requests to a RESTful API, while server code might have a repository which accesses a database directly.</p></li>
+<li><p>By allowing the task of resolving dependencies to fall on a separate container, we can reduce dependencies both on specific types, and also the multiplicity of those types (i.e. whether or not we should be referring to singleton/memoized instances) - which makes our code more robust, and easier to test in isolation.</p></li>
+</ol>
+
+
+<p>To see why this is useful, consider the following (slightly contrived) class which represent users in an application:</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">UserCollection</span>
+
+    <span class="n">constructor</span><span class="p">:</span> <span class="o">-&gt;</span>
+        <span class="vi">@_repository</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">HttpRepository</span>
+        <span class="vi">@_items</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">_success_handler</span><span class="p">:</span> <span class="p">(</span> <span class="n">data</span> <span class="p">)</span> <span class="o">=&gt;</span>
+        <span class="vi">@items</span><span class="o">[</span><span class="n">data</span><span class="o">.</span><span class="n">id</span><span class="o">]</span> <span class="o">=</span> <span class="n">data</span>
+        
+    <span class="n">_success_handler</span><span class="p">:</span> <span class="p">(</span> <span class="n">opts</span> <span class="p">)</span> <span class="o">=&gt;</span>
+        
+        
+    <span class="n">find</span><span class="p">:</span> <span class="p">(</span> <span class="nb">id</span> <span class="p">)</span> <span class="o">-&gt;</span>
+        <span class="k">return</span> <span class="vi">@_items</span> <span class="k">unless</span> 
+        <span class="vi">@repository</span><span class="o">.</span><span class="n">find</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span>
+            <span class="n">success</span><span class="p">:</span> <span class="p">(</span> <span class="n">data</span> <span class="p">)</span> <span class="o">-&gt;</span>
+                <span class="nb">self</span><span class="o">.</span><span class="n">items</span><span class="o">[</span><span class="n">data</span><span class="o">.</span><span class="n">id</span><span class="o">]</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">User</span><span class="p">(</span> <span class="n">data</span> <span class="p">)</span>
+                
+        
+</code></pre>
+</div>
+
+
+<p>Instantiation of the <code>User</code> class would look something like this:</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">user</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">User</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">auth_user_id</span><span class="p">)</span>
+</code></pre>
+</div>
+
+
+<p>There are some obvious problems here, caused by the tight coupling between the User class and the HttpRepository:</p>
+
+<ol>
+<li>The User class has to know which repository class to instantiate, which makes testing awkward (in statically-typed languages more so than in dynamic ones - but even in JavaScript or CoffeeScript we still have to take care to mock</li>
+</ol>
+
+
+<p>Here's how we might write the example using a dependency injection container:</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">User</span>
+
+    <span class="vi">@dependency</span> <span class="n">repository</span><span class="p">:</span> <span class="s2">&quot;DataRepository&quot;</span>
+    
+    <span class="n">constructor</span><span class="p">:</span> <span class="p">(</span><span class="vi">@id</span><span class="p">)</span> <span class="o">-&gt;</span>
+    
+    <span class="nb">load</span><span class="p">:</span> <span class="o">-&gt;</span>
+        <span class="vi">@repository</span><span class="o">.</span><span class="n">load</span><span class="p">(</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="vi">@id</span> <span class="p">)</span>
+        
+<span class="c1"># configure the container at startup</span>
+<span class="n">container</span><span class="o">.</span><span class="n">register_class</span> <span class="s2">&quot;DataRepository&quot;</span><span class="p">,</span> <span class="no">HttpRepository</span>
+<span class="n">container</span><span class="o">.</span><span class="n">register_class</span> <span class="s2">&quot;User&quot;</span><span class="p">,</span> <span class="no">User</span>
+
+<span class="c1"># and here&#39;s how we use it:</span>
+<span class="n">user</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">resolve</span> <span class="s2">&quot;User&quot;</span><span class="p">,</span> <span class="n">auth_user_id</span>
+</code></pre>
+</div>
+
+
+<p>This is much neater.  Now when we come to write our unit tests we can configure the container appropriately - with a fake (in-memory) data repository for feature tests, say, and a mocked repository for unit tests.</p>
+
+<p>Finally, suppose we wish to reuse our User class in our server application.  This time we want to make a connection to the database - but we want to reuse the connection across all instances of User.  With our container, it's easy - we just specify that the repository should be memoized:</p>
+
+<div class="highlight"><pre><code class="coffeescript"><span class="nx">container</span><span class="p">.</span><span class="nx">register_class</span> <span class="s2">&quot;DataRepository&quot;</span><span class="p">,</span> <span class="nx">DBRepository</span><span class="p">,</span> <span class="nv">singleton: </span><span class="kc">true</span>
+</code></pre>
+</div>
+
+
+<p>And now, once the repository has been instantiated, the same instance will be returned each and every time we resolve for a DataRepository.</p>
 
 
 <div id="related-posts">
@@ -57,7 +272,11 @@
 
     <li><span id="date">15 Oct 2012</span> &raquo; <a href="/2012/10/15/principles-of-good-software-design">Principles of Good Software Design</a></li>
 
-    <li><span id="date">14 Oct 2012</span> &raquo; <a href="/2012/10/14/software-complexity">Principles of Good Software Design</a></li>
+    <li><span id="date">14 Oct 2012</span> &raquo; <a href="/2012/10/14/software-complexity">Avoid Incidental Complexity</a></li>
+
+    <li><span id="date">12 Oct 2012</span> &raquo; <a href="/2012/10/12/how-to-write-testable-code">How To Write Testable Code</a></li>
+
+    <li><span id="date">10 Oct 2012</span> &raquo; <a href="/2012/10/10/how-to-write-effective-unit-tests">How To Write Effective Unit Tests</a></li>
 
 </ul>
 
@@ -69,6 +288,9 @@
             </div>
         </div>
         <footer>
+            <div class="wrapper footer-content">
+            asd
+            </div>
             <p>Developed and designed by me.
                 <a class="link" target="_blank" href="https://twitter.com/JohnBrunton">@johnbrunton</a></p>
         </footer>

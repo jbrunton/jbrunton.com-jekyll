@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>How To Write Effective Unit Tests - jbrunton.com</title>
+        <link href="/public/css/site.css" rel="stylesheet" type="text/css" />
+        <link href="/public/css/pygments.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <div class="header">
+            <div class="wrapper">
+                <div class="content">
+                    <nav>
+                        <a id="home" href="/">
+                            <h3>jbrunton.com</h3>
+                        </a>
+                        
+                            
+                                <a href="/religion.html">Religion</a>
+                            
+                        
+                            
+                                <a href="/software.html">Software</a>
+                            
+                        
+                            
+                                <a href="/about.html">About Me</a>
+                            
+                        
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <div class="wrapper">
+            <div class="box">
+                <div class="content">
+                    <h1>How To Write Effective Unit Tests</h1>
+
+<p class="tags"> Tags:
+    
+    
+    <span class="tag"><a href="/tag/Software%20Design">Software Design</a></span>
+
+    <span class="tag"><a href="/tag/Unit%20Tests">Unit Tests</a></span>
+
+
+
+
+</p>
+
+<p>Three rules of thumb I always try to follow.</p>
+
+<h2>1. Test each subject in isolation</h2>
+
+<p>Well designed units of code can and should be tested in isolation.  Any dependencies should be replaced with <a href="http://www.martinfowler.com/bliki/TestDouble.html">test doubles</a>, in order that your test definitely asserts nothing about the behavior of other units of code.  Otherwise, your tests will be unnecessarily brittle, with dependencies on large amounts of code which should not be directly related to the subject under test (SUT) - and failures elsewhere in the codebase will cause cascading failures across your unit tests, making it hard to determine the source of errors.</p>
+
+<h2>2. Write atomic tests</h2>
+
+<p>A single test which tries to asset everything it can about the SUT isn't very useful - because if one test fails it becomes hard to infer anything meaningful from the assertions which follow, as the SUT may have been left in an invalid or unexpected state.</p>
+
+<h2>3. Test behaviors (not implementation details)</h2>
+
+<p>Suppose I'm implementing a collection of some kind:</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">UsersCollection</span>
+    <span class="n">constructor</span><span class="p">:</span> <span class="o">-&gt;</span>
+        <span class="vi">@_users</span> <span class="o">=</span> <span class="o">[]</span>
+ 
+    <span class="n">add</span><span class="p">:</span> <span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="o">=&gt;</span>
+        <span class="vi">@_users</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+ 
+    <span class="n">remove</span><span class="p">:</span> <span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="o">=&gt;</span>
+        <span class="vi">@_users</span> <span class="o">=</span> <span class="n">_</span><span class="o">.</span><span class="n">without</span><span class="p">(</span><span class="vi">@_users</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+ 
+    <span class="n">get</span><span class="p">:</span> <span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="o">=&gt;</span>
+        <span class="n">_</span><span class="o">.</span><span class="n">find</span> <span class="vi">@_users</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span>
+</code></pre>
+</div>
+
+
+<p>You might want to start by testing that the add method works as expected.  Here's one possible implementation:</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">beforeEach</span> <span class="o">-&gt;</span>
+    <span class="n">collection</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">UsersCollection</span>
+ 
+<span class="n">describe</span> <span class="s2">&quot;#add&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+ 
+    <span class="n">it</span> <span class="s2">&quot;should add an element to the collection&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">User</span><span class="p">(</span> <span class="nb">name</span><span class="p">:</span> <span class="s2">&quot;Joe&quot;</span> <span class="p">)</span>
+        <span class="n">collection</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">collection</span><span class="o">.</span><span class="n">_users</span><span class="p">)</span><span class="o">.</span><span class="n">toEqual</span><span class="p">(</span><span class="o">[</span><span class="n">user</span><span class="o">]</span><span class="p">)</span>
+</code></pre>
+</div>
+
+
+<p>The problem with this is that it tightly couples the test to the implementation of our collection.  We might later decide to use a hashmap internally, for example &mdash; but then the test will fail, because we no longer have a list called <code>_users</code>.</p>
+
+<p>A better implementation will test for the expected behavior of the collection &mdash; i.e. what happens when we try to retrieve an element?</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">describe</span> <span class="s2">&quot;#add&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+    <span class="n">it</span> <span class="s2">&quot;should add an element to the collection&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">User</span><span class="p">(</span> <span class="nb">id</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">name</span><span class="p">:</span> <span class="s2">&quot;Joe&quot;</span> <span class="p">)</span>
+        <span class="n">collection</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">collection</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">toBe</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+</code></pre>
+</div>
+
+
+<p>With this approach, you can refactor your implementation as you like, safe in the knowledge that your tests will continue to pass or fail according to the intended behavior of the class!</p>
+
+
+<div id="related-posts">
+    <h3>Related Posts</h3>
+    
+    <ul class="posts">
+
+    <li><span id="date">16 Oct 2012</span> &raquo; <a href="/2012/10/16/dependency-injection">Why Dependency Injection Matters In Dynamic Languages</a></li>
+
+    <li><span id="date">15 Oct 2012</span> &raquo; <a href="/2012/10/15/principles-of-good-software-design">Principles of Good Software Design</a></li>
+
+    <li><span id="date">14 Oct 2012</span> &raquo; <a href="/2012/10/14/software-complexity">Avoid Incidental Complexity</a></li>
+
+    <li><span id="date">12 Oct 2012</span> &raquo; <a href="/2012/10/12/how-to-write-testable-code">How To Write Testable Code</a></li>
+
+</ul>
+
+
+
+</div>
+
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div class="wrapper footer-content">
+            asd
+            </div>
+            <p>Developed and designed by me.
+                <a class="link" target="_blank" href="https://twitter.com/JohnBrunton">@johnbrunton</a></p>
+        </footer>
+    </body>
+</html>
