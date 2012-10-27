@@ -15,15 +15,11 @@
                         </a>
                         
                             
-                                <a href="/religion.html">Religion</a>
+                                <a href="/software-testability.html">Software Testability</a>
                             
                         
                             
-                                <a href="/software.html">Software</a>
-                            
-                        
-                            
-                                <a href="/about.html">About Me</a>
+                                <a href="/software-design.html">Software Design</a>
                             
                         
                     </nav>
@@ -38,7 +34,7 @@
 <p class="tags"> Tags:
     
     
-    <span class="tag"><a href="/tag/Software%20Design">Software Design</a></span>
+    <span class="tag"><a href="/tag/Software%20Testability">Software Testability</a></span>
 
     <span class="tag"><a href="/tag/Unit%20Tests">Unit Tests</a></span>
 
@@ -51,11 +47,29 @@
 
 <h2>1. Test each subject in isolation</h2>
 
-<p>Well designed units of code can and should be tested in isolation.  Any dependencies should be replaced with <a href="http://www.martinfowler.com/bliki/TestDouble.html">test doubles</a>, in order that your test definitely asserts nothing about the behavior of other units of code.  Otherwise, your tests will be unnecessarily brittle, with dependencies on large amounts of code which should not be directly related to the subject under test (SUT) - and failures elsewhere in the codebase will cause cascading failures across your unit tests, making it hard to determine the source of errors.</p>
+<p>Well designed units of code can and should be tested in isolation.  Any dependencies should be replaced with <a href="http://www.martinfowler.com/bliki/TestDouble.html">test doubles</a>, in order that your test asserts nothing about the behavior of other units of code.  Otherwise, your tests will be unnecessarily brittle, with dependencies on large amounts of code which should not be directly related to the subject under test (SUT) - and failures elsewhere in the codebase will cause cascading failures across your unit tests, making it hard to determine the source of errors.</p>
 
 <h2>2. Write atomic tests</h2>
 
-<p>A single test which tries to asset everything it can about the SUT isn't very useful - because if one test fails it becomes hard to infer anything meaningful from the assertions which follow, as the SUT may have been left in an invalid or unexpected state.</p>
+<p>A single test which tries to assert everything it can about the SUT isn't very useful - because if one test fails it can have a domino effect on the assertions which follow it, making it hard to infer anything meaningful from the remainder of the test cases.  More problematic, though, is that without being extremely careful to manually tear down and setup variables and object states, it can be difficult to be sure that passing tests are valid.</p>
+
+<p>describe "#find", -></p>
+
+<pre><code>it "retrieves users by id", -&gt;
+    user = collection.find(1)
+    expect(user).toBeDefined()
+
+    user = collection.search("dave")
+    expect(user).toBeDefined()
+</code></pre>
+
+<p>it "does this other thing", -></p>
+
+<pre><code>app.other_thing()
+assert(app.other_thing)
+</code></pre>
+
+<p>For example:</p>
 
 <h2>3. Test behaviors (not implementation details)</h2>
 
@@ -95,7 +109,7 @@
 
 <p>The problem with this is that it tightly couples the test to the implementation of our collection.  We might later decide to use a hashmap internally, for example &mdash; but then the test will fail, because we no longer have a list called <code>_users</code>.</p>
 
-<p>A better implementation will test for the expected behavior of the collection &mdash; i.e. what happens when we try to retrieve an element?</p>
+<p>A better implementation will test for the expected <em>behaviors</em> of the collection &mdash; e.g. that the element can now be retrieved through the classes interface as expected.</p>
 
 <div class="highlight"><pre><code class="ruby"><span class="n">describe</span> <span class="s2">&quot;#add&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
     <span class="n">it</span> <span class="s2">&quot;should add an element to the collection&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
@@ -106,7 +120,7 @@
 </div>
 
 
-<p>With this approach, you can refactor your implementation as you like, safe in the knowledge that your tests will continue to pass or fail according to the intended behavior of the class!</p>
+<p>With this approach, you can refactor your implementation as you like, safe in the knowledge that your tests will continue to pass or fail according to the intended behavior of the class.</p>
 
 
 <div id="related-posts">
@@ -131,11 +145,8 @@
                 </div>
             </div>
         </div>
-        <footer>
-            <div class="wrapper footer-content">
-            asd
-            </div>
-            <p>Developed and designed by me.
+        <footer class="wrapper">
+            <p>Site developed and designed by me:
                 <a class="link" target="_blank" href="https://twitter.com/JohnBrunton">@johnbrunton</a></p>
         </footer>
     </body>

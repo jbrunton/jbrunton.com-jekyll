@@ -1,6 +1,8 @@
 ---
 layout: default
 ---
-<h5>Blog Posts</h5>
+
+## Recent Posts:
+
 {% assign posts_list = site.posts %}
 {% include posts_list.html %}

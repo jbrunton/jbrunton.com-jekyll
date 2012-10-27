@@ -3,7 +3,7 @@ layout: post
 title: How To Write Testable Code
 tags:
     - Software Design
-    - Unit Tests
+    - Software Testability
 ---
 
 Three rules of thumb for writing testable code.

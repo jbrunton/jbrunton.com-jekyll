@@ -3,8 +3,7 @@ layout: post
 title: Principles of Good Software Design
 tags:
     - Software Design
-    - Don't Repeat Yourself
-    - Divide & Conquer
+    - Software Testability
 ---
 
 

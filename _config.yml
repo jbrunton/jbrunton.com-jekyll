@@ -5,11 +5,8 @@ pygments: true
 
 nav_links:
     -
-        url: "/religion.html"
-        label: "Religion"
+        url: "/software-testability.html"
+        label: "Software Testability"
     -
-        url: "/software.html"
-        label: "Software"
-    -
-        url: "/about.html"
-        label: "About Me"
+        url: "/software-design.html"
+        label: "Software Design"
