@@ -64,21 +64,27 @@ p, li {
 }
 
 nav {
-    margin: 0 160px;
+    margin: -4px 20px 0 20px;
 }
 
-nav a {
+nav ul {
+    float: right;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline-block;
+}
+
+nav ul a {
     margin: 0 10px;
     text-transform: uppercase;
     font-size: 13px;
-    float: right;
 }
 
-nav a:first-child {
-    margin-left: 0;
-    float: left;
-    font-size: auto;
-    text-transform: none;
+nav ul a:last-child {
+    margin-right: 0;
 }
 
 .wrapper {
@@ -90,11 +96,23 @@ nav a:first-child {
     box-shadow: 0px 0px 8px rgba(0, 0, 0, .6);
     background-color: #FFF;
     margin: 40px 0 0 0;
-    padding: 30px 160px 0 160px;
+}
+
+.columns, .column {
+    padding: 20px 40px;
+    float: left;
+}
+
+.one.column, .one.columns {
+    width: 320px;
+}
+
+.two.column, .two.columns {
+    width: 640px;
 }
 
 .content {
-    padding: 10px 40px;
+    padding: 10px 0;
 }
 
 #profile-photo {
@@ -145,6 +163,17 @@ footer p a.link:hover {
     background-color: #F9F9F9;
 }
 
+.highlight {
+    width: 880px;
+}
+
+pre {
+    font-family: Monaco,Andale Mono,Courier New,monospace;
+    font-size: 13px;
+    line-height: 18px;
+    margin: 0;
+}
+
 blockquote p {
     margin: 0;
 }
@@ -157,6 +186,12 @@ blockquote cite:before {
     content: '\2014\0020';
 }
 
-.tags .tag a {
+.posts {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.tags .tag {
     margin: 0 10px;
 }

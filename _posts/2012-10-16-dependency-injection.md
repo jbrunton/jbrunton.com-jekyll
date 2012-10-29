@@ -10,7 +10,7 @@ One of the foundational principles of good software design is that code should b
 
 As a pattern, DI is well established in a number of frameworks for statically typed environments (such as Microsoft's [Unity](http://unity.codeplex.com/) container for .NET applications, or the lightweight [Picocontainer](http://picocontainer.codehaus.org/) for Java).  But do we really need to use the pattern in dynamic languages, such as JavaScript, when the concept of static types doesn't really apply?
 
-The answer is: almost definitely.  Let's take a look at the ways in which DI helps us write robust, loosely coupled applications.
+The answer is: almost definitely!  Let's take a look at the ways in which DI helps us write robust, testable, loosely coupled applications &mdash; and why these techniques are relevant irrespective of the typing system.
 
 ## 1. Resolve concrete types at runtime
 
@@ -20,8 +20,8 @@ As an example, suppose we're writing a .NET application, and in order to abstrac
 
 {% highlight csharp %}
 public interface IDataRepository {
-    IEnumerable<IUser> users();
-    IEnumerable<IAccount> accounts();
+    IEnumerable<IUser> users { get; }
+    IEnumerable<IAccount> accounts { get; }
 }
 {% endhighlight %}
 
@@ -29,17 +29,25 @@ Our WPF client application might communicate with our server over some RESTful w
 
 {% highlight csharp %}
 public class HttpRepository {
-    public IEnumerable<IUser> users() {
-        // makes a web request and returns the results
+    public property IEnumerable<IUser> users
+    {
+        get
+        {
+            // makes a web request and returns the results
+        }
     }
     
-    public IEnumerable<IAccount> accounts() {
-        // ditto
+    public IEnumerable<IAccount> accounts
+    {
+        get
+        {
+            // ditto
+        }
     }
 }
 {% endhighlight %}
 
-We can now map the IDataRepository interface to the correct class at runtime when we configure the container:
+We can now map the IDataRepository interface to the correct class at runtime when we configure the container with the application Bootstrapper:
 
 {% highlight csharp %}
 public class Bootstrapper extends UnityBootstrapper {
@@ -48,20 +56,21 @@ public class Bootstrapper extends UnityBootstrapper {
     {
         base.ConfigureContainer();
     
-        this.RegisterTypeIfMissing(typeof(IDataRepository),
-            typeof(HttpRepository));
+        this.RegisterTypeIfMissing(typeof(IDataRepository), typeof(HttpRepository));
     }
 
 }
 {% endhighlight %}
 
-And now when we resolve an instance of IDataRepository, we'll get back an instance of HttpRepository, as required.  If we want to configure the container differently for a server application (to map to an OracleRepository, say), then it's one line of code to change.
+And now when we resolve for an instance of the IDataRepository interface, we'll get back an instance of HttpRepository, as desired.  If we want to configure the container differently for a server application (to map to a ```DbRepository``` to interface with our database, say), then it's one line of code to change in the bootstrapper.
 
-Obviously this advantage is only relevant to statically typed languages, so we see no benefit here when using dynamic languages.
+Is this kind of mapping relevant only to statically typed languages?  Not at all.  In the sense that our JavaScript object constructors or CoffeeScript classes can be considered types, we can decouple our concrete implementations from the code which has them as dependencies, retaining exactly the same advantages of loose coupling and runtime decisions about types as we do with static languages.
 
 ## 2. Delegate configuration of the container to the appropriate unit of code.
 
-Without dependency injection, every time you add a dependency to a class you have to locate all the feature tests which involve that class in some way and add in suitable test doubles; and every time you write a new test, you have to figure out all of the dependencies across all of the classes involved, and ensure they're suitably mocked.  In other words, there's a tight coupling between each test and the dependencies of the subject under test (SUT) - not just with the SUT itself.  Here's an example of what I mean:
+Note: either bootstrapper, or module; depends on requirements and conventions; in either case, tests (esp. feature tests) are more robust and quicker and easier to write.
+
+One of the reasons why a tight coupling between one unit of code and its dependencies is disadvantageous is that the setup phase for tests must swap in any necessary test doubles for dependencies of the subject under test (SUT) in a very manual way.  For example, I often see tests which look like this:
 
 {% highlight ruby %}
 describe "Application", ->
@@ -77,29 +86,29 @@ describe "Application", ->
         app.run()
 {% endhighlight %}
 
+This is highly brittle: every time you add a dependency to a class you have to locate all the tests which involve that class in some way and add in suitable test doubles; and every time you write a new test, you have to figure out all of the dependencies across all of the classes involved, and ensure they're suitably mocked.  In other words, there's a tight coupling between each test and the dependencies of the SUT.
 
-If we adopt this approach, our tests will become increasingly difficult to write and maintain as the complexity of our codebase grows.
-
-A better approach is to delegate configuration of the container to individual application modules.  Here's an example:
+With code like this, our tests will become increasingly difficult to write and maintain as the complexity of our codebase grows.  A better approach is to delegate configuration of the container to either the application bootstrapper, or the individual application modules.  (The most suitable approach might depend on the requirements and conventions of your codebase, but both will result in tests which are more robust, and quicker and easier to write.)  Here's an example:
 
 {% highlight ruby %}
 class RepositoryModule
 
     configure_container: (container, env) ->
-        if env == "production"
+        if env == "web"
             container.register_class "DataRepository", HttpRepository
-        else
+        else if env == "nodejs"
+            container.register_class "DataRepository", DbRepository
+        else if env == "test"
             container.register_class "DataRepository", MemoryRepository
-{% endhighlight %}
 
-Now, if we implement our application to configure each module before initializing it, we can boot up our application
+{% endhighlight %}
 
 And now, to configure and run our entire application for testing, our code is as simple as this:
 
 {% highlight ruby %}
 beforeEach: ->
-    bootstrapper = new Bootstrapper( mode: "test" )
-    app = new application
+    bootstrapper = new TestBootstrapper()
+    app = new Application(env: "test")
     
 define "Application", ->
 
@@ -111,104 +120,42 @@ This removes the coupling between our tests and the dependencies of the SUT - wh
 
 ## 3. Remove dependencies on multiplicity of a class.
 
-Do we want our data source to be shared across the entire application?  Do we want each client unit of code to instantiate its own instance?  Often, the answer is contextual: we might want to share a database connection for performance reasons in one application; but we might want to create a new repository each time we need data access in another, in order to avoid stale data in our repository class.
+Do we want our data source to be shared across the entire application?  Do we want each client unit of code to instantiate its own data source?  Often, the answer is contextual: we might want to share a database connection for performance reasons in one application; but we might want to create a new repository each time we need data access in another, in order to avoid stale data in our data source representation.
 
-If we use dependency injection, then clients of our data repository don't have to know for sure whether to instantiate a new instance, or whether to share an existing one.  If we wish to share an instance, we can configure our container to memoize the repository it resolves, so that the same instance will be returned on subsequent calls to resolve:
+If we use a DI container, then clients of our data repository aren't required to have any knowledge about how and when to instantiate a new instance, or whether to share an existing one.  If we wish to share an instance, we can configure our container to memoize the repository it resolves, so that the same instance will be returned on subsequent calls to ```resolve```:
 
     container.register_class "DataRepository", OracleRepository, singleton: true
     
-This helps us further reduce dependencies in our code.  And removing this particular dependency is likely to help us write more robust tests as well - because it's awkward to test singletons or monad objects - and by removing the expectation that a particular dependency should always be a single instance, we can remove that requirement in tests as well.
+This helps us further reduce dependencies in our code.  And removing this particular dependency is likely to help us write more robust tests as well &mdash; because it's awkward to test singletons or monad objects (see [TODO: link to post]) &mdash; and by removing the expectation that a particular dependency should always be a single instance, we can remove that requirement in tests as well.
         
 ## 4. Use different containers across a single application
 
-It's often useful to be able to configure several distinct containers to resolve mappings differently across an application.  As an example, suppose we want each application module to keep its own open connection to the database.
+It's often useful to be able to configure several distinct containers to resolve mappings differently across different contexts in an application.  As an example, suppose we want each application module to keep its own open connection to the database:
 
-
-
+{% highlight ruby %}
 UsersModule
 
     @dependency repository: "DataRepository"
 
     configure_container: (container) ->
-            container.child().register_instance "DataRepository",
-                container.resolve "DataRepository"
+            container.child().register_instance "DataRepository", container.resolve "DataRepository"
 
     find: (id) ->
         @repository.find("user", id)
+{% endhighlight %}   
 
-    
+We can continue to configure our application bootstrapper class with the data source appropriate to our environment (```DbConnection```, etc.) &mdash; but we can also still ensure that, in production and feature test environments, the UsersModule creates a child container which will memoize the data source instance &mdash; so that any dependencies resolved with this container will share the same instance.
 
-## 5. Knowledge of how to build dependencies is delegated to 
+## 5. Knowledge of how to build dependencies is delegated
 
-There are a few obvious benefits to resolving dependencies dynamically:
+This point is a little subtle, and is really a special case of #1, but it's worth highlighting.  Consider this contrived example:
 
-1.  For testing purposes we can configure our DI container to resolve mappings to [test doubles](http://www.martinfowler.com/bliki/TestDouble.html) (i.e. stubs/mocks/spies/fake objects).
+    person = new Person()
 
-2.  If our code is to be reused across different platforms or frameworks, then we can configure our container appropriately for each.  For example, JavaScript code on the client might have a data repository configured to make HTTP requests to a RESTful API, while server code might have a repository which accesses a database directly.
+The reason why this code is poor is not only that it's hard to test or reuse across different environments: it also requires the client code to have detailed knowledge about to construct a Person &mdash i.e. there is tighter coupling in the code than there necessarily needs to be.
 
-3.  By allowing the task of resolving dependencies to fall on a separate container, we can reduce dependencies both on specific types, and also the multiplicity of those types (i.e. whether or not we should be referring to singleton/memoized instances) - which makes our code more robust, and easier to test in isolation.
+By using dependency injection, each class is responsible for specifying its dependencies, and client code only need resolve the mapping name.  The task of resolving dependencies is then delegated to the container.
 
-To see why this is useful, consider the following (slightly contrived) class which represent users in an application:
+## In conclusion
 
-{% highlight ruby %}
-class UserCollection
-
-    constructor: ->
-        @_repository = new HttpRepository
-        @_items = {}
-
-    _success_handler: ( data ) =>
-        @items[data.id] = data
-        
-    _success_handler: ( opts ) =>
-        
-        
-    find: ( id ) ->
-        return @_items unless 
-        @repository.find "user", id,
-            success: ( data ) ->
-                self.items[data.id] = new User( data )
-                
-        
-{% endhighlight %}
-        
-Instantiation of the ```User``` class would look something like this:
-
-{% highlight ruby %}
-user = new User(app.api.url, auth_user_id)
-{% endhighlight %}
-
-There are some obvious problems here, caused by the tight coupling between the User class and the HttpRepository:
-
-1. The User class has to know which repository class to instantiate, which makes testing awkward (in statically-typed languages more so than in dynamic ones - but even in JavaScript or CoffeeScript we still have to take care to mock 
-
-
-Here's how we might write the example using a dependency injection container:
-
-{% highlight ruby %}
-class User
-
-    @dependency repository: "DataRepository"
-    
-    constructor: (@id) ->
-    
-    load: ->
-        @repository.load( "user", @id )
-        
-# configure the container at startup
-container.register_class "DataRepository", HttpRepository
-container.register_class "User", User
-
-# and here's how we use it:
-user = container.resolve "User", auth_user_id
-{% endhighlight %}
-    
-This is much neater.  Now when we come to write our unit tests we can configure the container appropriately - with a fake (in-memory) data repository for feature tests, say, and a mocked repository for unit tests.
-
-Finally, suppose we wish to reuse our User class in our server application.  This time we want to make a connection to the database - but we want to reuse the connection across all instances of User.  With our container, it's easy - we just specify that the repository should be memoized:
-
-{% highlight coffeescript %}
-container.register_class "DataRepository", DBRepository, singleton: true
-{% endhighlight %}
-    
-And now, once the repository has been instantiated, the same instance will be returned each and every time we resolve for a DataRepository.
+So to recap: dependency injection allows us to decouple our code and resolve dependencies dynamically in such a way that we can write highly testable and reusable code.

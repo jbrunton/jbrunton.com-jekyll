@@ -2,17 +2,21 @@
 layout: default
 ---
 
-<h1>{{ page.title }}</h1>
+<div class="clearfix">
+    <div class="two columns">
+        <h1>{{ page.title }}</h1>
 
-<p class="tags"> Tags:
-    {% assign tags_list = page.tags %}
-    {% include tags_list.html %}
-</p>
+        <p>Posted {{ page.date | date_to_string }}</p>
 
-{{ content }}
+        <p class="tags">Tags:
+            {% assign tags_list = page.tags %}
+            {% include tags_list.html %}
+        </p>
 
-<div id="related-posts">
-    <h3>Related Posts</h3>
-    {% assign posts_list = site.related_posts %}
-    {% include posts_list.html %}
+        {{ content }}
+
+        <h3>Related Posts:</h3>
+        {% assign posts_list = site.related_posts %}
+        {% include posts_list.html %}
+    </div>
 </div>

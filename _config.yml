@@ -5,8 +5,11 @@ pygments: true
 
 nav_links:
     -
-        url: "/software-testability.html"
-        label: "Software Testability"
-    -
         url: "/software-design.html"
         label: "Software Design"
+    -
+        url: "/software-testability.html"
+        label: "Testability"
+    -
+        url: "/programming-languages.html"
+        label: "Programming Languages"

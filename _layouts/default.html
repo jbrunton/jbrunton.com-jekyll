@@ -13,13 +13,17 @@
                         <a id="home" href="/">
                             <h3>jbrunton.com</h3>
                         </a>
+                        <ul>
                         {% for link in site.nav_links %}
+                            <li>
                             {% if page.url == link.url %}
                                 <a class="selected" href="{{ link.url }}">{{ link.label }}</a>
                             {% else %}
                                 <a href="{{ link.url }}">{{ link.label }}</a>
                             {% endif %}
+                            </li>
                         {% endfor %}
+                        </ul>
                     </nav>
                 </div>
             </div>
