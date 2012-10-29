@@ -204,6 +204,10 @@ blockquote cite:before {
     padding: 0;
 }
 
-.tags .tag {
-    margin: 0 10px;
+.tags .tag:after {
+    content: '\0020\00B7';
+}
+
+.tags .tag:last-child:after {
+    content: '';
 }
