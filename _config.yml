@@ -1,5 +1,6 @@
 destination: _site
 permalink: /blog/:year/:month/:day/:title
+tag_dir: /blog/tag
 markdown: rdiscount
 pygments: true
 
