@@ -15,8 +15,10 @@ layout: default
 
         {{ content }}
 
-        <h3>Related Posts:</h3>
-        {% assign posts_list = site.related_posts %}
-        {% include posts_list.html %}
+        {% if site.related_posts.size > 0 %}
+            <h3>Related Posts:</h3>
+            {% assign posts_list = site.related_posts %}
+            {% include posts_list.html %}
+        {% endif %}
     </div>
 </div>

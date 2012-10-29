@@ -1,17 +1,18 @@
 ---
 layout: default
+title: Software Design
 ---
 <div class="clearfix">
     <div class="two columns">
-        <h1>Programming Languages</h1>
+        <h1>Software Design</h1>
     </div>
 </div>
 <div class="clearfix">
     <div class="two columns">
        
-        <p>The benefits of well designed code are clear: good code is that which is readable, maintainable and testable.  And code with such qualities has very real benefits for a business: it's cheaper to development, safer to change, and easier to hire and on-board new engineers.
+        <p>The benefits of well designed code are clear: good code is that which is readable, maintainable and testable.  And code with such qualities has very real benefits for a business: it's cheaper to develop, safer to change, and easier to hire and on-board new engineers.
         
-        <p>I'm interested in the theory of software design, but I'm also always striving to find ways to make it intuitive and to easily put it into practice.  As such, a lot of the posts on this site endeavor to distil the theory down to pragmatic rules-of-thumb to help one easily identify good coding practices from those which will be costly.
+        <p>I'm interested in the theory of software design, but I'm always thoroughly concerned with the practical: how can abstract notions, such as complexity, be made intuitive easily put it into practice.  As such, a lot of the posts on this site endeavor to distil the theory down to pragmatic rules-of-thumb to help one easily identify good coding practices from those which will be costly.
         
         <h2>Dependency Injection</h2>
         
