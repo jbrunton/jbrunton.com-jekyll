@@ -10,7 +10,7 @@ nav_links:
         label: "Software Design"
     -
         url: "/software-testability.html"
-        label: "Testability"
+        label: "Software Testability"
     -
         url: "/programming-languages.html"
         label: "Programming Languages"

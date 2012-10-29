@@ -99,7 +99,7 @@ nav ul a:last-child {
 }
 
 .columns, .column {
-    padding: 20px 40px;
+    padding: 0 40px;
     float: left;
 }
 
@@ -116,7 +116,11 @@ nav ul a:last-child {
 }
 
 .content {
-    padding: 10px 0;
+    padding: 20px 0;
+}
+
+.header .content {
+    padding: 9px 0 0 0;
 }
 
 #profile-photo {
