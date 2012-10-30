@@ -135,7 +135,7 @@ nav ul a:last-child {
     border: solid 1px #DDD;
 }
 
-.box .content h1, .box .content h2 {
+.box .content h1, .box .content h2, .box .content h3 {
     margin: 0 0 29px 0;
 }
 

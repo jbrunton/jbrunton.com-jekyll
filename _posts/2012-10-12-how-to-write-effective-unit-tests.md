@@ -12,28 +12,11 @@ There are other, more subtle principles worth learning about (Steven Sanderson h
 
 ## 1. Test each subject in isolation
 
-Well designed units of code can and should be tested in isolation.  Any dependencies should be replaced with appropriate [test doubles](http://www.martinfowler.com/bliki/TestDouble.html), in order that your test asserts nothing about the behavior of other units of code.  Otherwise, your tests will be unnecessarily brittle, with dependencies on large amounts of code beyond the subject under test (SUT) &mdash; and failures elsewhere in the codebase will cause cascading failures across your unit tests, making it hard to determine the source of errors.
+Well designed units of code can and should be tested in isolation.  Any dependencies should be replaced with appropriate [test doubles](http://www.martinfowler.com/bliki/TestDouble.html), in order that your tests assert nothing about the behavior of other units of code.  Otherwise, your tests will be unnecessarily brittle, with dependencies on large amounts of code beyond the subject under test (SUT) &mdash; and failures elsewhere in the codebase will cause cascading failures across your unit tests, making it hard to determine the source of each error.
 
 ## 2. Write atomic tests
 
-A single test which tries to assert everything it can about the SUT isn't very useful &mdash; because if one test fails it can have a domino effect on the assertions which follow it, making it hard to infer anything meaningful from the remainder of the test cases.  More problematic than that, though, is that without being extremely careful to manually tear down and setup variables and object states, it can be difficult to be sure that all passing tests are valid, because, as the state of the test subject changes through the course of the test, it's hard to be sure that the setup step correctly returns it to the state expected by each assertion.
-
-{% highlight ruby %}
-describe "#find", ->
-
-    it "retrieves users by id", ->
-        user = collection.find(1)
-        expect(user).toBeDefined()
-        
-        user = collection.search("dave")
-        expect(user).toBeDefined()
-{% endhighlight %}
-    
-it "does this other thing", ->
-    app.other_thing()
-    assert(app.other_thing)
-
-For example:
+A single test which tries to assert everything it can about the SUT isn't very useful &mdash; because if one test fails it can have a domino effect on the assertions which follow it, making it hard to infer anything meaningful from the remainder of the test cases.  More problematic than that, though, is that without being extremely careful to manually tear down and setup all relevant variables and objects between each assertion, it can be difficult to be sure that all passing tests are valid, because, as the state of the test subject changes through the course of the test, it's hard to be sure that the setup steps correctly return it to the "initial" state expected by each assertion.
 
 ## 3. Test behaviors (not implementation details)
 
@@ -71,7 +54,7 @@ describe "#add", ->
 
 The problem with this is that it tightly couples the test to the implementation of our collection.  We might later decide to use a hashmap internally, for example &mdash; but then the test will fail, because we no longer have a list called ```_users```.
 
-A better implementation will test for the expected *behaviors* of the collection &mdash; e.g. that the element can now be retrieved through the classes interface as expected.
+A better implementation will test for the expected *behavior* of the collection &mdash; e.g. that the element can now be retrieved through the classes interface as expected.
 
 {% highlight ruby %}
 describe "#add", ->

@@ -61,7 +61,7 @@
 
         </p>
 
-        <p>In my post <a href="/blog/2012/10/08/principles-of-good-software-design">Principles of Good Software Design</a>, I outlined the key principles which I think underpin all good code.  This post continues the theme (reiterating a few of the same points), but from the point of view of what it takes to write code which is easily testable.</p>
+        <p>In my post <a href="/blog/2012/10/08/principles-of-good-software-design">Principles of Good Software Design</a>, I outlined the principles which I think underpin all good code.  This post continues the theme (reiterating a few of the same points), but from the point of view of what it takes to write code which is easily testable.</p>
 
 <p>For clarity, I should point out that I'm using <em>testable</em> in this post to mean <em>unit-testable</em>.  Writing <em>feature tests</em> and <em>integration tests</em> throws up different challenges &mdash; but if we write our code to be unit testable then we'll be in a much better start place to implement these other kinds of tests later.</p>
 
@@ -70,8 +70,8 @@
 <p>It's worth quickly considering what it means for code to be <em>easily testable</em>, so that we're clear about what our goals (and the advantages of testing code) are:</p>
 
 <ul>
-<li><strong>High test coverage</strong>: we should be testing every discrete unit of code &mdash; that is, for every problem we solve in code, we want to test that we've solved it correctly.  Our unit tests will therefore give us</li>
-<li><strong>Robust tests</strong>: failures should highlight incorrect code (not merely changes); and a single failure should not cascade across other test suites.</li>
+<li><strong>High test coverage</strong>: we should be testing every discrete unit of code &mdash; that is, for every problem we solve in code, we want to test that we've solved it correctly.  Our unit tests will therefore give us a good indicator of the health of our whole codebase (not necessarily that it's totally free from bugs, but that each unit of code appears to behave as expected).</li>
+<li><strong>Robust tests</strong>: failures should highlight incorrect code (not merely changes to code, as is sadly often the case); and a single failure should not cascade across other test suites.</li>
 <li><strong>Easy to write tests</strong>: writing new tests for new or modified code should be a breeze.  There should be minimal setup, and it should be easy to understand what to test and how to test it.</li>
 </ul>
 

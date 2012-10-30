@@ -17,24 +17,24 @@ There are plenty of definitions for complexity to choose from.  Here's one which
 
 > <cite>R. Taylor, N. Medvidovic and E. Dashofy,  *Software Architecture: Foundations, Theory and Practice*, Hoboken, NJ: John Wiley & Sons, 2009.</cite>
 
-There are also plenty of theoretical metrics available to help us measure the complexity of our programs:
+There are also plenty of theoretical metrics available to help us measure the complexity of our programs.  A couple of the more popular ones:
 
 * [Cyclomatic complexity](http://en.wikipedia.org/wiki/Cyclomatic_complexity) is a measure of the number of execution paths through a program.
 * [Halstead metrics](http://en.wikipedia.org/wiki/Halstead_complexity_measures) give figure for the *length* and *vocabulary* of a program (and, although originally conceived for procedural programs, can easily be [adapted for OOP languages](http://www.virtualmachinery.com/sidebar2.htm)).
 
-But how useful are these definitions in practice?  Is it really useful to put a figure on the complexity of your application?  It's probably clear that your multi-platform web service (complete with mobile apps and SMS notifications) has a higher degree of complexity than the rake task which deploys it &mdash; but how does that help you make informed decisions about the structure of the application?  Is the level of complexity to appropriate to the problem domains we're dealing with, or should we be looking to simplify the structure and source code?
+But how useful are these definitions in practice?  Is it really useful to put a figure on the complexity of your application?  It's probably clear that your multi-platform web service (complete with mobile apps and SMS notifications) has a higher degree of complexity than the rake task which deploys it &mdash; but how does that help you make informed decisions about the structure of the application?  Is the level of complexity appropriate to the problem domains we're dealing with, or should we be looking to simplify the structure and source code?
 
 What's needed instead are some rules of thumb to help us identify code which we should simplify to achieve greater clarity or robustness.
 
 ## Incidental Complexity
 
-There's another way we can categorize complexity: by making the distinction between *incidental* and *inherent* (or sometimes *accidental* or *essential*) complexity.  Here's the wikipedia definition:
+There's another way we can categorize complexity: by making the distinction between *incidental* and *inherent* complexity (or sometimes *accidental* or *essential* complexity).  Here's the wikipedia definition:
 
 > Accidental complexity: Relates to difficulties a programmer faces due to the chosen software engineering tools. A better fitting set of tools or a more high-level programming language may reduce it.
 
 > Essential complexity: Is caused by the characteristics of the problem to be solved and cannot be reduced.
 
-<cite>[Wikipedia &mdash; Programming complexity](http://en.wikipedia.org/wiki/Programming_complexity#Types)</cite>
+> <cite>[Wikipedia entry on *Programming complexity*](http://en.wikipedia.org/wiki/Programming_complexity#Types)</cite>
 
 In my opinion, however, this isn't general enough.  Plenty of code features incidental complexity (i.e. that which is not inherent to solving the problem at hand) not because the solution could be better written in another language, but because the developer is trying to solve too many problems at once.  Consider this example:
 

@@ -7,7 +7,7 @@ tags:
     - Unit Tests
 ---
 
-In my post [Principles of Good Software Design](/blog/2012/10/08/principles-of-good-software-design), I outlined the key principles which I think underpin all good code.  This post continues the theme (reiterating a few of the same points), but from the point of view of what it takes to write code which is easily testable.
+In my post [Principles of Good Software Design](/blog/2012/10/08/principles-of-good-software-design), I outlined the principles which I think underpin all good code.  This post continues the theme (reiterating a few of the same points), but from the point of view of what it takes to write code which is easily testable.
 
 For clarity, I should point out that I'm using *testable* in this post to mean *unit-testable*.  Writing *feature tests* and *integration tests* throws up different challenges &mdash; but if we write our code to be unit testable then we'll be in a much better start place to implement these other kinds of tests later.
 
@@ -15,8 +15,8 @@ For clarity, I should point out that I'm using *testable* in this post to mean *
 
 It's worth quickly considering what it means for code to be *easily testable*, so that we're clear about what our goals (and the advantages of testing code) are:
 
-* **High test coverage**: we should be testing every discrete unit of code &mdash; that is, for every problem we solve in code, we want to test that we've solved it correctly.  Our unit tests will therefore give us 
-* **Robust tests**: failures should highlight incorrect code (not merely changes); and a single failure should not cascade across other test suites.
+* **High test coverage**: we should be testing every discrete unit of code &mdash; that is, for every problem we solve in code, we want to test that we've solved it correctly.  Our unit tests will therefore give us a good indicator of the health of our whole codebase (not necessarily that it's totally free from bugs, but that each unit of code appears to behave as expected).
+* **Robust tests**: failures should highlight incorrect code (not merely changes to code, as is sadly often the case); and a single failure should not cascade across other test suites.
 * **Easy to write tests**: writing new tests for new or modified code should be a breeze.  There should be minimal setup, and it should be easy to understand what to test and how to test it.
 
 Here, then, is what I strive for when writing application code, in order that it should meet the above criteria.

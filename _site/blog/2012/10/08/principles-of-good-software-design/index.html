@@ -63,18 +63,18 @@
 
         <h2>The goals of good software design</h2>
 
-<p>To reiterate what I've said elsewhere on this site, the benefits of well designed code are clear: good code is that which is readable, maintainable and testable. And code with such qualities has very real benefits for a business: it's cheaper to develop, safer to change, and easier to hire and on-board new engineers.</p>
+<p>To reiterate what I've said elsewhere on this site, there are real benefits to having designed code: good code (i.e. that which is readable, maintainable and testable) is cheaper to develop, safer to change, and hiring and on-boarding new engineers becomes much easier.</p>
 
-<p>Let's quickly outline what we have in mind when we talk about these qualities of a good codebase:</p>
+<p>Let's quickly outline what we have in mind when we talk about these qualities of a codebase:</p>
 
 <ul>
-<li><strong>Readability</strong>: if I look at a unit of code, can I easily understand it?</li>
-<li><strong>Maintainability</strong>: if I modify a unit of code, will all dependent units of code change their behavior consistently?  Will I have to make further changes across unrelated pieces of code, because the first unit of code is not authoritative in the system?  Can I easily refactor and generalize code, or is it too tightly coupled?</li>
-<li><strong>Testability</strong>: can I quickly write effective unit and feature tests?</li>
+<li><strong>Readability</strong>: If I look at a unit of code, can I easily understand it?</li>
+<li><strong>Maintainability</strong>: If I modify a unit of code, will all dependent units of code change their behavior consistently?  Will I have to make further changes across unrelated pieces of code, because the first unit of code is not authoritative in the system?  Can I easily refactor and generalize code, or is it too tightly coupled?</li>
+<li><strong>Testability</strong>: Can I quickly write effective unit and feature tests?</li>
 </ul>
 
 
-<p>Taking these as our three overarching goals for good software design, how do we achieve these aims?  What are the principles that underpin all well engineered solutions?  What are the signs we should be looking for that might indicate our codebase is below par, and how should we address them?</p>
+<p>Taking these as our three overarching goals for good software design, how do we achieve these aims?  What are the principles that underpin all well engineered applications?  What are the signs we should be looking for that might indicate our codebase is below par, and how should we address them?</p>
 
 <h2>The basic principles</h2>
 
@@ -86,7 +86,7 @@
 </ol>
 
 
-<p>Briefly (I will elaborate on all these points below): clarity of code follows from avoiding incidental complexity; DRY code is inherently maintainable.  And in order to achieve these two properties, we must first structure our application so that it is loosely coupled and strongly cohesive; we must ensure we solve programming problems using patterns and paradigms appropriate for the problem domain; and we must avoid black-box "God classes" and methods by decomposing complex units of code with a high cyclomatic complexity.  Finally, once we have achieved these properties, testability drops right out.</p>
+<p>Briefly (I will elaborate on all these points below): clarity of code follows from avoiding incidental complexity; DRY code is inherently maintainable.  And in order to achieve these two properties, we must first structure our application so that it is loosely coupled and strongly cohesive; we must ensure we solve programming problems using patterns and paradigms appropriate for the problem domain; and we must avoid black-box "God classes" and methods by decomposing complex units of code with a high cyclomatic complexity.  Finally, once we have achieved these properties, we find that we've achieved testability too.</p>
 
 <p>Here's a visual diagram (the goals are in red, the design principles are in blue, and an arrow from one item to another indicates that the first requires the second to hold):</p>
 
@@ -110,19 +110,19 @@
 
 <p><cite><em><a href="http://www.artima.com/intv/dry.html">Orthogonality and the DRY Principle</a></em>, a conversation with Andy Hunt and Dave Thomas</cite></p></blockquote>
 
-<p>Most systems I've worked with are far from completely DRY in this regard: knowledge is redefined across the data schema, data model, and frequently across various interfaces too.  However, accepting that there are degrees of DRYness, and that developing <em>completely</em> DRY code often requires a not insignificant investment in code generator tools (or other means to translate knowledge across tiers in an n-tier application), the benefits of at least some degree of abstraction are clear.  Wikipedia puts it well:</p>
+<p>Most systems I've worked with are far from completely DRY in this regard: knowledge is often redefined across the data schema, data model, and frequently across various user interfaces too.  However, accepting that there are degrees of DRYness, and that developing <em>completely</em> DRY code often requires a not insignificant investment in code generator tools (or other means to translate knowledge across tiers in an n-tier application), the benefits of at least some degree of abstraction are clear.  Wikipedia puts it well:</p>
 
-<blockquote><p>When the DRY principle is applied successfully, a modification of any single element of a system does not require a change in other logically unrelated elements. Additionally, elements that are logically related all change predictably and uniformly, and are thus kept in sync.</p>
-
-<p>Wikipedia</p></blockquote>
+<blockquote><p>When the DRY principle is applied successfully, a modification of any single element of a system does not require a change in other logically unrelated elements. Additionally, elements that are logically related all change predictably and uniformly, and are thus kept in sync.</p></blockquote>
 
 <h3>Coupling</h3>
 
+<p>Loose coupling is a property most developers will aspire for, but let's take the time to clarify what we mean by this and why it's desirable:</p>
+
 <blockquote><p>Coupling is the degree to which each program module relies on each one of the other modules.</p>
 
-<p><cite><a href="http://en.wikipedia.org/wiki/Coupling_(computer_programming">Wikipedia entry on <em>Coupling</em></a>)</p></blockquote>
+<p><cite>Wikipedia entry on <em>Coupling</em></cite></p></blockquote>
 
-<p>Consider the effect of a high degree of coupling on our application.  As soon as we introduce a high level of coupling between modules, the difficulty of managing dependencies starts to impede our ability to abstract out commonalities.  Thus, loose coupling is what enables abstraction or DRY code: it is a requisite of maintaining a DRY codebase.</p>
+<p>Now, consider the effect of a high degree of coupling on our application.  As soon as we introduce a high level of coupling between modules, the difficulty of managing dependencies starts to impede our ability to abstract out commonalities.  Thus, loose coupling is what enables abstraction or DRY code: it is a requisite of maintaining a DRY codebase.</p>
 
 <h2>2. Avoid incidental complexity</h2>
 
@@ -153,9 +153,13 @@
 
 <h2>A virtuous circle</h2>
 
-<p>A happy outcome of following the above principles is that each one positively reinforces the others.  For example:
-* Writing tests will often highlight flaws in code (such as tight coupling) which would impede abstraction.
-* Decomposing problems (to reduce incidental complexity) improve testability of the code by providing distinct interfaces to test against; and it will facilitate abstraction, as it will simplify identification of the individual authoritative representations of system knowledge.</p>
+<p>A happy outcome of following the above principles is that each one positively reinforces the others.  For example:</p>
+
+<ul>
+<li>Writing tests will often highlight flaws in code (such as tight coupling) which would impede abstraction.</li>
+<li>Decomposing problems (to reduce incidental complexity) improves testability of the code by providing distinct, named interfaces to test against; and it will facilitate abstraction, as having distinct, named interfaces simplifies identification of the individual authoritative representations of system knowledge.</li>
+</ul>
+
 
 <p>The principles are thus mutually reinforcing.</p>
 

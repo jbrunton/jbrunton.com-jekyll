@@ -9,15 +9,15 @@ tags:
 
 ## The goals of good software design
 
-To reiterate what I've said elsewhere on this site, the benefits of well designed code are clear: good code is that which is readable, maintainable and testable. And code with such qualities has very real benefits for a business: it's cheaper to develop, safer to change, and easier to hire and on-board new engineers.
+To reiterate what I've said elsewhere on this site, there are real benefits to having designed code: good code (i.e. that which is readable, maintainable and testable) is cheaper to develop, safer to change, and hiring and on-boarding new engineers becomes much easier.
 
-Let's quickly outline what we have in mind when we talk about these qualities of a good codebase:
+Let's quickly outline what we have in mind when we talk about these qualities of a codebase:
 
-* **Readability**: if I look at a unit of code, can I easily understand it?
-* **Maintainability**: if I modify a unit of code, will all dependent units of code change their behavior consistently?  Will I have to make further changes across unrelated pieces of code, because the first unit of code is not authoritative in the system?  Can I easily refactor and generalize code, or is it too tightly coupled?
-* **Testability**: can I quickly write effective unit and feature tests?
+* **Readability**: If I look at a unit of code, can I easily understand it?
+* **Maintainability**: If I modify a unit of code, will all dependent units of code change their behavior consistently?  Will I have to make further changes across unrelated pieces of code, because the first unit of code is not authoritative in the system?  Can I easily refactor and generalize code, or is it too tightly coupled?
+* **Testability**: Can I quickly write effective unit and feature tests?
 
-Taking these as our three overarching goals for good software design, how do we achieve these aims?  What are the principles that underpin all well engineered solutions?  What are the signs we should be looking for that might indicate our codebase is below par, and how should we address them?
+Taking these as our three overarching goals for good software design, how do we achieve these aims?  What are the principles that underpin all well engineered applications?  What are the signs we should be looking for that might indicate our codebase is below par, and how should we address them?
 
 ## The basic principles
 
@@ -26,7 +26,7 @@ I find it most useful to start with two foundational principles from which all o
 1. Keep your code **DRY**.
 2. Avoid **incidental complexity**.
 
-Briefly (I will elaborate on all these points below): clarity of code follows from avoiding incidental complexity; DRY code is inherently maintainable.  And in order to achieve these two properties, we must first structure our application so that it is loosely coupled and strongly cohesive; we must ensure we solve programming problems using patterns and paradigms appropriate for the problem domain; and we must avoid black-box "God classes" and methods by decomposing complex units of code with a high cyclomatic complexity.  Finally, once we have achieved these properties, testability drops right out.
+Briefly (I will elaborate on all these points below): clarity of code follows from avoiding incidental complexity; DRY code is inherently maintainable.  And in order to achieve these two properties, we must first structure our application so that it is loosely coupled and strongly cohesive; we must ensure we solve programming problems using patterns and paradigms appropriate for the problem domain; and we must avoid black-box "God classes" and methods by decomposing complex units of code with a high cyclomatic complexity.  Finally, once we have achieved these properties, we find that we've achieved testability too.
 
 Here's a visual diagram (the goals are in red, the design principles are in blue, and an arrow from one item to another indicates that the first requires the second to hold):
 
@@ -50,19 +50,19 @@ Avoiding duplication is at the heart of writing maintainable software.  But the 
 
 > <cite>*[Orthogonality and the DRY Principle](http://www.artima.com/intv/dry.html)*, a conversation with Andy Hunt and Dave Thomas</cite>
 
-Most systems I've worked with are far from completely DRY in this regard: knowledge is redefined across the data schema, data model, and frequently across various interfaces too.  However, accepting that there are degrees of DRYness, and that developing *completely* DRY code often requires a not insignificant investment in code generator tools (or other means to translate knowledge across tiers in an n-tier application), the benefits of at least some degree of abstraction are clear.  Wikipedia puts it well:
+Most systems I've worked with are far from completely DRY in this regard: knowledge is often redefined across the data schema, data model, and frequently across various user interfaces too.  However, accepting that there are degrees of DRYness, and that developing *completely* DRY code often requires a not insignificant investment in code generator tools (or other means to translate knowledge across tiers in an n-tier application), the benefits of at least some degree of abstraction are clear.  Wikipedia puts it well:
 
 > When the DRY principle is applied successfully, a modification of any single element of a system does not require a change in other logically unrelated elements. Additionally, elements that are logically related all change predictably and uniformly, and are thus kept in sync.
 
-> Wikipedia
-
 ### Coupling
+
+Loose coupling is a property most developers will aspire for, but let's take the time to clarify what we mean by this and why it's desirable:
 
 > Coupling is the degree to which each program module relies on each one of the other modules.
 
-> <cite>[Wikipedia entry on *Coupling*](http://en.wikipedia.org/wiki/Coupling_(computer_programming))
+> <cite>Wikipedia entry on *Coupling*</cite>
 
-Consider the effect of a high degree of coupling on our application.  As soon as we introduce a high level of coupling between modules, the difficulty of managing dependencies starts to impede our ability to abstract out commonalities.  Thus, loose coupling is what enables abstraction or DRY code: it is a requisite of maintaining a DRY codebase.
+Now, consider the effect of a high degree of coupling on our application.  As soon as we introduce a high level of coupling between modules, the difficulty of managing dependencies starts to impede our ability to abstract out commonalities.  Thus, loose coupling is what enables abstraction or DRY code: it is a requisite of maintaining a DRY codebase.
 
 ## 2. Avoid incidental complexity
 
@@ -90,7 +90,8 @@ Once we've achieved code which satisfies all of the above, we should find our co
 ## A virtuous circle
 
 A happy outcome of following the above principles is that each one positively reinforces the others.  For example:
+
 * Writing tests will often highlight flaws in code (such as tight coupling) which would impede abstraction.
-* Decomposing problems (to reduce incidental complexity) improve testability of the code by providing distinct interfaces to test against; and it will facilitate abstraction, as it will simplify identification of the individual authoritative representations of system knowledge.
+* Decomposing problems (to reduce incidental complexity) improves testability of the code by providing distinct, named interfaces to test against; and it will facilitate abstraction, as having distinct, named interfaces simplifies identification of the individual authoritative representations of system knowledge.
 
 The principles are thus mutually reinforcing.
