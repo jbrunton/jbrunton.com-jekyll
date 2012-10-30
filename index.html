@@ -10,7 +10,7 @@ layout: default
         {% include posts_list.html %}
     </div>
     <div class="one column sidebar">
-        <p class="tags">Tags:
+        <p class="tags">Browse:
         {% for tag in site.tags %}
             <span class="tag"><a href="/tag/{{ tag[0] | url_encode }}">{{ tag[0] }}</a></span>
         {% endfor %}
