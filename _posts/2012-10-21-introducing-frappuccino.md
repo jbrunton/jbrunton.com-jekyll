@@ -17,4 +17,4 @@ The sources of inspiration include:
 
 The name Frappuccino comes from the fact that the code is written in CoffeeScript, and (though I do say so myself) I think it's pretty cool.
 
-The code (very much work in progress) is available [here](https://github.com/jbrunton/frappuccino-core).  Of more interest to those who are curious, however, is this [demo application on github](https://github.com/jbrunton/frappuccino-demo).  Check out the [readme](https://github.com/jbrunton/frappuccino-demo#readme) for an overview of some of the most interesting features of the framework, and try it out online [here](frappuccino-demo.com).
+The code (very much work in progress) is available [here](https://github.com/jbrunton/frappuccino-core).  Of more interest to those who are curious, however, is this [demo application on github](https://github.com/jbrunton/frappuccino-demo).  Check out the [readme](https://github.com/jbrunton/frappuccino-demo#readme) for an overview of some of the most interesting features of the framework, and try out the demo online [here](http://frappuccino-demo.com).

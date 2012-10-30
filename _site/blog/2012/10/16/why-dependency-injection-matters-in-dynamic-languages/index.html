@@ -59,17 +59,17 @@
 
         </p>
 
-        <p>One of the foundational principles of good software design is that code should be loosely coupled, and there are few better ways to achieve this in the world of object-oriented programming than with dependency injection (DI).  Typically implemented with a <em>dependency injection container</em> - an object which manages and resolves concrete dependencies for client classes - dependency injection allows classes to be written without tying them to any specific concrete types or instances.</p>
+        <p>One of the foundational principles of good software design is that code should be loosely coupled, and there are few better ways to achieve this in the world of object-oriented programming than with dependency injection (DI).  Typically implemented with a <em>dependency injection container</em> &mdash; an object which manages and resolves concrete dependencies for client classes &mdash; dependency injection allows classes to be written without tying them to any specific concrete types or instances.</p>
 
-<p>As a pattern, DI is well established in a number of frameworks for statically typed environments (such as Microsoft's <a href="http://unity.codeplex.com/">Unity</a> container for .NET applications, or the lightweight <a href="http://picocontainer.codehaus.org/">Picocontainer</a> for Java).  But do we really need to use the pattern in dynamic languages, such as JavaScript, when the concept of static types doesn't really apply?</p>
+<p>As a pattern, DI is well established in a number of frameworks for statically typed environments (such as Microsoft's <a href="http://unity.codeplex.com/">Unity</a> container for .NET applications, or the lightweight <a href="http://picocontainer.codehaus.org/">Picocontainer</a> for Java).  But is there any benefit in using the pattern with dynamic languages, such as JavaScript, when the concept of static types doesn't really apply?</p>
 
-<p>The answer is: almost definitely!  And there are a few frameworks which are aware of this &mdash; but they're still somewhat in the minority.  So let's take a look at the ways in which DI helps us write robust, testable, loosely coupled applications &mdash; and why these techniques are relevant irrespective of the typing system.</p>
+<p>The answer is: almost certainly!  And there are a few frameworks which are aware of this (such as <a href="http://angularjs.org/">AngularJS</a>) &mdash; but they're still somewhat in the minority.  So let's take a look at the ways in which DI helps us write robust, testable, loosely coupled applications &mdash; and why these techniques are relevant irrespective of the typing system.</p>
 
 <h2>1. Resolve concrete types at runtime</h2>
 
-<p>This is one of the most obvious benefits of a DI container in a statically typed language - the container is configured to map a particular interface to a specific concrete implementation at runtime.</p>
+<p>This is one of the most obvious benefits of a DI container in a statically typed language &mdash; the container is configured to map a particular interface to a specific concrete implementation at runtime.</p>
 
-<p>As an example, suppose we're writing a .NET application, and in order to abstract data access we have the following IDataRepository interface:</p>
+<p>As an example, suppose we're writing a .NET application, and in order to abstract data access we have the following <code>IDataRepository</code> interface:</p>
 
 <div class="highlight"><pre><code class="csharp"><span class="k">public</span> <span class="k">interface</span> <span class="n">IDataRepository</span> <span class="p">{</span>
     <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">IUser</span><span class="p">&gt;</span> <span class="n">users</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
@@ -79,9 +79,9 @@
 </div>
 
 
-<p>Our WPF client application might communicate with our server over some RESTful web services.  So we have an HttpRepository concrete implementation:</p>
+<p>Our WPF client application might communicate with our server over some RESTful web services.  So we have an <code>HttpRepository</code> concrete implementation:</p>
 
-<div class="highlight"><pre><code class="csharp"><span class="k">public</span> <span class="k">class</span> <span class="nc">HttpRepository</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="csharp"><span class="k">public</span> <span class="k">class</span> <span class="nc">HttpRepository</span> <span class="n">implements</span> <span class="n">IDataRepository</span> <span class="p">{</span>
     <span class="k">public</span> <span class="n">property</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">IUser</span><span class="p">&gt;</span> <span class="n">users</span>
     <span class="p">{</span>
         <span class="k">get</span>
@@ -102,7 +102,7 @@
 </div>
 
 
-<p>We can now map the IDataRepository interface to the correct class at runtime when we configure the container with the application Bootstrapper:</p>
+<p>We can now map the <code>IDataRepository</code> interface to the correct class at runtime when we configure the container with the application bootstrapper:</p>
 
 <div class="highlight"><pre><code class="csharp"><span class="k">public</span> <span class="k">class</span> <span class="nc">Bootstrapper</span> <span class="n">extends</span> <span class="n">UnityBootstrapper</span> <span class="p">{</span>
 
@@ -118,24 +118,23 @@
 </div>
 
 
-<p>And now when we resolve for an instance of the IDataRepository interface, we'll get back an instance of HttpRepository, as desired.  If we want to configure the container differently for a server application (to map to a <code>DbRepository</code> to interface with our database, say), then it's one line of code to change in the bootstrapper.</p>
+<p>And now when we resolve an instance of the <code>IDataRepository</code> interface through our container, we'll get back an instance of <code>HttpRepository</code>, as desired.  If we want to configure the container differently for a server application (to map to a <code>DbRepository</code> to interface with our database, say), then it's one line of code to change in the bootstrapper.</p>
 
-<p>Is this kind of mapping relevant only to statically typed languages?  Not at all.  In the sense that our JavaScript object constructors or CoffeeScript classes can be considered types, we can decouple our concrete implementations from the code which has them as dependencies, retaining exactly the same advantages of loose coupling and runtime decisions about types as we do with static languages.</p>
+<p>Is this kind of mapping relevant only to statically typed languages?  Not at all.  In the sense that our JavaScript object constructors or CoffeeScript classes can be considered types, we can decouple our concrete implementations from the code which has them as dependencies, retaining exactly the same advantages of loose coupling and runtime decisions about types as we would with a statically typed environment.</p>
 
-<h2>2. Delegate configuration of the container to the appropriate unit of code.</h2>
-
-<p>Note: either bootstrapper, or module; depends on requirements and conventions; in either case, tests (esp. feature tests) are more robust and quicker and easier to write.</p>
+<h2>2. Delegate configuration of the container to the appropriate unit of code</h2>
 
 <p>One of the reasons why a tight coupling between one unit of code and its dependencies is disadvantageous is that the setup phase for tests must swap in any necessary test doubles for dependencies of the subject under test (SUT) in a very manual way.  For example, I often see tests which look like this:</p>
 
 <div class="highlight"><pre><code class="ruby"><span class="n">describe</span> <span class="s2">&quot;Application&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
 
     <span class="n">beforeEach</span><span class="p">:</span> <span class="o">-&gt;</span>
+        <span class="c1"># mock/fake/dummy all the things</span>
         <span class="n">repository</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">TestRepository</span>
-        <span class="n">renderer</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">TestRenderer</span>        
+        <span class="n">renderer</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">TestRenderer</span>
         <span class="c1"># etc.</span>
         
-        <span class="n">app</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">Application</span><span class="p">(</span><span class="n">repository</span><span class="p">)</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">Application</span><span class="p">(</span><span class="n">repository</span><span class="p">,</span> <span class="n">renderer</span><span class="p">,</span> <span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="p">)</span>
     
     <span class="n">it</span> <span class="s2">&quot;is awkward to configure the environment for testing&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
         <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
@@ -143,9 +142,9 @@
 </div>
 
 
-<p>This is highly brittle: every time you add a dependency to a class you have to locate all the tests which involve that class in some way and add in suitable test doubles; and every time you write a new test, you have to figure out all of the dependencies across all of the classes involved, and ensure they're suitably mocked.  In other words, there's a tight coupling between each test and the dependencies of the SUT.</p>
+<p>This is highly brittle: every time you add a dependency to a class you have to locate all the tests which involve that class in some way and add in suitable test doubles; and every time you write a new test, you have to figure out all of the dependencies across all of the classes involved, and ensure they're suitably doubled.  In other words, there's a tight coupling between each test and the dependencies of the SUT.</p>
 
-<p>With code like this, our tests will become increasingly difficult to write and maintain as the complexity of our codebase grows.  A better approach is to delegate configuration of the container to either the application bootstrapper, or the individual application modules.  (The most suitable approach might depend on the requirements and conventions of your codebase, but both will result in tests which are more robust, and quicker and easier to write.)  Here's an example:</p>
+<p>With code like this, our tests will become increasingly difficult to write and maintain as the complexity of our codebase grows.  A better approach is to delegate configuration of the container to either the application bootstrapper, or the individual application modules.  (The most suitable approach might depend on the requirements and conventions of your codebase, but both will result in tests which are more robust, and quicker and easier to write.)  Here's an example of how we might use our <code>RepositoryModule</code> to configure a <code>DataRepository</code> type appropriate to the execution environment:</p>
 
 <div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">RepositoryModule</span>
 
@@ -163,8 +162,8 @@
 <p>And now, to configure and run our entire application for testing, our code is as simple as this:</p>
 
 <div class="highlight"><pre><code class="ruby"><span class="n">beforeEach</span><span class="p">:</span> <span class="o">-&gt;</span>
-    <span class="n">bootstrapper</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">TestBootstrapper</span><span class="p">()</span>
-    <span class="n">app</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">Application</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="s2">&quot;test&quot;</span><span class="p">)</span>
+    <span class="n">bootstrapper</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">TestBootstrapper</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="s2">&quot;test&quot;</span><span class="p">)</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">Application</span>
     
 <span class="n">define</span> <span class="s2">&quot;Application&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
 
@@ -174,18 +173,20 @@
 </div>
 
 
-<p>This removes the coupling between our tests and the dependencies of the SUT - which allows us to write much more robust and succinct tests.</p>
+<p>This removes the coupling between our tests and the dependencies of the SUT &mdash; which allows us to write much more robust and succinct tests.</p>
 
-<h2>3. Remove dependencies on multiplicity of a class.</h2>
+<h2>3. Remove dependencies on multiplicity of a class</h2>
 
-<p>Do we want our data source to be shared across the entire application?  Do we want each client unit of code to instantiate its own data source?  Often, the answer is contextual: we might want to share a database connection for performance reasons in one application; but we might want to create a new repository each time we need data access in another, in order to avoid stale data in our data source representation.</p>
+<p>Do we want our data source to be shared across the entire application?  Do we want each client unit of code to instantiate its own data source?  Often, the answer is contextual: we might want to share a database connection for performance reasons in one application; but we might want to create a new repository each time we need data access in another, in order to avoid the risk of stale data.</p>
 
-<p>If we use a DI container, then clients of our data repository aren't required to have any knowledge about how and when to instantiate a new instance, or whether to share an existing one.  If we wish to share an instance, we can configure our container to memoize the repository it resolves, so that the same instance will be returned on subsequent calls to <code>resolve</code>:</p>
+<p>If we use a DI container, then clients of our data repository aren't required to have any knowledge about how and when to instantiate a new instance, or whether to share an existing one.  If we wish to share an instance, we can configure our container to memoize the repository it resolves, so that the same instance will be returned on all subsequent calls to <code>resolve</code>:</p>
 
-<pre><code>container.register_class "DataRepository", OracleRepository, singleton: true
+<div class="highlight"><pre><code class="ruby"><span class="n">container</span><span class="o">.</span><span class="n">register_class</span> <span class="s2">&quot;DataRepository&quot;</span><span class="p">,</span> <span class="no">DbRepository</span><span class="p">,</span> <span class="n">singleton</span><span class="p">:</span> <span class="kp">true</span>
 </code></pre>
+</div>
 
-<p>This helps us further reduce dependencies in our code.  And removing this particular dependency is likely to help us write more robust tests as well &mdash; because it's awkward to test singletons or monad objects (see [TODO: link to post]) &mdash; and by removing the expectation that a particular dependency should always be a single instance, we can remove that requirement in tests as well.</p>
+
+<p>This helps us further reduce dependencies in our code.  And removing this particular dependency is likely to help us write more robust tests as well &mdash; because it's awkward to test singletons or monad objects (see <a href="/blog/2012/10/10/how-to-write-testable-code">How To Write Testable Code</a>) &mdash; and by removing the expectation that a particular dependency should always be a single instance, we can remove that requirement in tests as well.</p>
 
 <h2>4. Use different containers across a single application</h2>
 
@@ -204,22 +205,19 @@
 </div>
 
 
-<p>We can continue to configure our application bootstrapper class with the data source appropriate to our environment (<code>DbConnection</code>, etc.) &mdash; but we can also still ensure that, in production and feature test environments, the UsersModule creates a child container which will memoize the data source instance &mdash; so that any dependencies resolved with this container will share the same instance.</p>
+<p>We can continue to configure our application bootstrapper class with the data source appropriate to our environment (<code>DbRepository</code>, <code>HttpRepository</code>, etc.) &mdash; but we can also still ensure that, in production and feature test environments, the UsersModule creates a child container which will memoize the data source instance, so that any dependencies resolved with this container will share the same instance.</p>
 
 <h2>5. Knowledge of how to build dependencies is delegated</h2>
 
-<p>This point is a little subtle, and is really a special case of #1, but it's worth highlighting.  Consider this contrived example:</p>
+<p>This point is a little subtle, and is really a special case of #1, but it's worth highlighting.</p>
 
-<pre><code>person = new Person()
-</code></pre>
+<p>Without dependency injection, we may have to pass dependencies to a class when we instantiate it (typically as arguments to the constructor).  But this requires that calling code must have some level of awareness of the nature of the dependencies of the class, increasing the degree of coupling between the class and its clients.</p>
 
-<p>The reason why this code is poor is not only that it's hard to test or reuse across different environments: it also requires the client code to have detailed knowledge about to construct a Person &amp;mdash i.e. there is tighter coupling in the code than there necessarily needs to be.</p>
-
-<p>By using dependency injection, each class is responsible for specifying its dependencies, and client code only need resolve the mapping name.  The task of resolving dependencies is then delegated to the container.</p>
+<p>By using DI, not only can we delegate knowledge about <em>how</em> to construct dependencies to the container; we can also delegate the knowledge about <em>what</em> those dependencies are, thus further reducing coupling in the codebase.</p>
 
 <h2>In conclusion</h2>
 
-<p>So to recap: dependency injection allows us to decouple our code and resolve dependencies dynamically in such a way that we can write highly testable and reusable code.</p>
+<p>So to recap: dependency injection allows us to write loosely coupled, testable and reusable code irrespective of the nature of the typing sustem we have.  The one problem is that the number of JavaScript libraries providing robust DI containers is currently very limited.  Hopefully the success of AngularJS will promote greater interest in the pattern within the JavaScript community.  And in the meantime, I'm developing my own for use with a <a href="/blog/2012/10/21/introducing-frappuccino/">personal project</a> of mine.</p>
 
 
         
