@@ -45,7 +45,7 @@
     <div class="two columns">
         <h1>How To Write Testable Code</h1>
 
-        <p>Posted 12 Oct 2012</p>
+        <p>Posted 10 Oct 2012</p>
 
         <p class="tags">Tags:
             
@@ -54,24 +54,46 @@
 
     <span class="tag"><a href="/blog/tag/Software+Testability">Software Testability</a></span>
 
+    <span class="tag"><a href="/blog/tag/Unit+Tests">Unit Tests</a></span>
+
 
 
 
         </p>
 
-        <p>Three rules of thumb for writing testable code.</p>
+        <p>In my post <a href="/blog/2012/10/08/principles-of-good-software-design">Principles of Good Software Design</a>, I outlined the key principles which I think underpin all good code.  This post continues the theme (reiterating a few of the same points), but from the point of view of what it takes to write code which is easily testable.</p>
+
+<p>For clarity, I should point out that I'm using <em>testable</em> in this post to mean <em>unit-testable</em>.  Writing <em>feature tests</em> and <em>integration tests</em> throws up different challenges &mdash; but if we write our code to be unit testable then we'll be in a much better start place to implement these other kinds of tests later.</p>
+
+<h2>What are we aiming for?</h2>
+
+<p>It's worth quickly considering what it means for code to be <em>easily testable</em>, so that we're clear about what our goals (and the advantages of testing code) are:</p>
+
+<ul>
+<li><strong>High test coverage</strong>: we should be testing every discrete unit of code &mdash; that is, for every problem we solve in code, we want to test that we've solved it correctly.  Our unit tests will therefore give us</li>
+<li><strong>Robust tests</strong>: failures should highlight incorrect code (not merely changes); and a single failure should not cascade across other test suites.</li>
+<li><strong>Easy to write tests</strong>: writing new tests for new or modified code should be a breeze.  There should be minimal setup, and it should be easy to understand what to test and how to test it.</li>
+</ul>
+
+
+<p>Here, then, is what I strive for when writing application code, in order that it should meet the above criteria.</p>
 
 <h2>1. Solve each problem in isolation</h2>
 
+<p>two potential problems:
+- low test coverage - cannot test individual problems
+- may have large number of outputs/consequences - requiring large number of assertions</p>
+
 <p>In OOP terms, avoid <a href="http://en.wikipedia.org/wiki/God_object">God classes</a>.  In functional terms, prefer small, composable functions over lengthy and complicated ones.  Whatever paradigm you're working with: each unit of code should solve one problem.</p>
 
-<p>The reason for this is simple: god classes (or god functions) are "black box" objects.  They either work or they don't, but the component pieces of their implementations are hidden from site, so can't be tested.  (Neither can they be <a href="/blog/2012/10/15/principles-of-good-software-design">reused or easily reasoned about</a>, but that's not the criticism we're concerned about here.)</p>
+<p>The reason for this is simple: god classes (or god functions) are "black box" objects.  They either work or they don't, but the component pieces of their implementations are hidden from site, so can't be tested.  (Neither can they be <a href="/blog/2012/10/08/principles-of-good-software-design">reused or easily reasoned about</a>, but that's not the criticism we're concerned about here.)</p>
 
-<p>In order to provide good test coverage, we have to be able to test the component pieces of our application</p>
+<p>In order to provide good test coverage, we have to be able to test the component pieces of our application.</p>
 
-<ol>
-<li>Avoid singletons/monads</li>
-</ol>
+<ul>
+<li><p>also: god classes/functions more likely to have large numbers of outputs - require large numbers of assertions -</p></li>
+<li><p>Avoid singletons/monads</p></li>
+</ul>
 
 
 <p>This is required in order that we can <a href="TODO:%20link">write atomic tests</a>.</p>
@@ -145,11 +167,11 @@ it "is awkward to configure the environment for testing", -&gt;
             
             <ul class="posts">
 
+    <li><span id="date">12 Oct 2012</span> &raquo; <a href="/blog/2012/10/12/how-to-write-effective-unit-tests">How To Write Effective Unit Tests</a></li>
+
     <li><span id="date">21 Oct 2012</span> &raquo; <a href="/blog/2012/10/21/introducing-frappuccino">Introducing Frappuccino</a></li>
 
-    <li><span id="date">15 Oct 2012</span> &raquo; <a href="/blog/2012/10/15/principles-of-good-software-design">Principles of Good Software Design</a></li>
-
-    <li><span id="date">10 Oct 2012</span> &raquo; <a href="/blog/2012/10/10/how-to-write-effective-unit-tests">How To Write Effective Unit Tests</a></li>
+    <li><span id="date">08 Oct 2012</span> &raquo; <a href="/blog/2012/10/08/principles-of-good-software-design">Principles of Good Software Design</a></li>
 
     <li><span id="date">16 Oct 2012</span> &raquo; <a href="/blog/2012/10/16/why-dependency-injection-matters-in-dynamic-languages">Why Dependency Injection Matters In Dynamic Languages</a></li>
 

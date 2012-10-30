@@ -45,7 +45,7 @@
     <div class="two columns">
         <h1>How To Write Effective Unit Tests</h1>
 
-        <p>Posted 10 Oct 2012</p>
+        <p>Posted 12 Oct 2012</p>
 
         <p class="tags">Tags:
             
@@ -59,15 +59,17 @@
 
         </p>
 
-        <p>Three rules of thumb I always try to follow.</p>
+        <p>Following on from my post <a href="/blog/2012/10/10/how-to-write-testable-code">How To Write Testable Code</a>, these are the three most important rules I always try to follow when writing unit tests, to really get the most value from them.</p>
+
+<p>There are other, more subtle principles worth learning about (Steven Sanderson has a <a href="http://blog.stevensanderson.com/2009/08/24/writing-great-unit-tests-best-and-worst-practises/">great post here</a> which explores the importance of orthogonality, as well as highlighting many of the points that I reiterate below) &mdash; but for the most part, if I adhere to these principles, then I find the rest follow naturally.</p>
 
 <h2>1. Test each subject in isolation</h2>
 
-<p>Well designed units of code can and should be tested in isolation.  Any dependencies should be replaced with <a href="http://www.martinfowler.com/bliki/TestDouble.html">test doubles</a>, in order that your test asserts nothing about the behavior of other units of code.  Otherwise, your tests will be unnecessarily brittle, with dependencies on large amounts of code which should not be directly related to the subject under test (SUT) - and failures elsewhere in the codebase will cause cascading failures across your unit tests, making it hard to determine the source of errors.</p>
+<p>Well designed units of code can and should be tested in isolation.  Any dependencies should be replaced with appropriate <a href="http://www.martinfowler.com/bliki/TestDouble.html">test doubles</a>, in order that your test asserts nothing about the behavior of other units of code.  Otherwise, your tests will be unnecessarily brittle, with dependencies on large amounts of code beyond the subject under test (SUT) &mdash; and failures elsewhere in the codebase will cause cascading failures across your unit tests, making it hard to determine the source of errors.</p>
 
 <h2>2. Write atomic tests</h2>
 
-<p>A single test which tries to assert everything it can about the SUT isn't very useful - because if one test fails it can have a domino effect on the assertions which follow it, making it hard to infer anything meaningful from the remainder of the test cases.  More problematic, though, is that without being extremely careful to manually tear down and setup variables and object states, it can be difficult to be sure that passing tests are valid.</p>
+<p>A single test which tries to assert everything it can about the SUT isn't very useful &mdash; because if one test fails it can have a domino effect on the assertions which follow it, making it hard to infer anything meaningful from the remainder of the test cases.  More problematic than that, though, is that without being extremely careful to manually tear down and setup variables and object states, it can be difficult to be sure that all passing tests are valid, because, as the state of the test subject changes through the course of the test, it's hard to be sure that the setup step correctly returns it to the state expected by each assertion.</p>
 
 <div class="highlight"><pre><code class="ruby"><span class="n">describe</span> <span class="s2">&quot;#find&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
 
@@ -146,11 +148,11 @@ assert(app.other_thing)
             
             <ul class="posts">
 
+    <li><span id="date">10 Oct 2012</span> &raquo; <a href="/blog/2012/10/10/how-to-write-testable-code">How To Write Testable Code</a></li>
+
     <li><span id="date">21 Oct 2012</span> &raquo; <a href="/blog/2012/10/21/introducing-frappuccino">Introducing Frappuccino</a></li>
 
-    <li><span id="date">15 Oct 2012</span> &raquo; <a href="/blog/2012/10/15/principles-of-good-software-design">Principles of Good Software Design</a></li>
-
-    <li><span id="date">12 Oct 2012</span> &raquo; <a href="/blog/2012/10/12/how-to-write-testable-code">How To Write Testable Code</a></li>
+    <li><span id="date">08 Oct 2012</span> &raquo; <a href="/blog/2012/10/08/principles-of-good-software-design">Principles of Good Software Design</a></li>
 
 </ul>
 

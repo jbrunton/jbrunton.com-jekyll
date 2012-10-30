@@ -6,15 +6,17 @@ tags:
     - Unit Tests
 ---
 
-Three rules of thumb I always try to follow.
+Following on from my post [How To Write Testable Code](/blog/2012/10/10/how-to-write-testable-code), these are the three most important rules I always try to follow when writing unit tests, to really get the most value from them.
+
+There are other, more subtle principles worth learning about (Steven Sanderson has a [great post here](http://blog.stevensanderson.com/2009/08/24/writing-great-unit-tests-best-and-worst-practises/) which explores the importance of orthogonality, as well as highlighting many of the points that I reiterate below) &mdash; but for the most part, if I adhere to these principles, then I find the rest follow naturally.
 
 ## 1. Test each subject in isolation
 
-Well designed units of code can and should be tested in isolation.  Any dependencies should be replaced with [test doubles](http://www.martinfowler.com/bliki/TestDouble.html), in order that your test asserts nothing about the behavior of other units of code.  Otherwise, your tests will be unnecessarily brittle, with dependencies on large amounts of code which should not be directly related to the subject under test (SUT) - and failures elsewhere in the codebase will cause cascading failures across your unit tests, making it hard to determine the source of errors.
+Well designed units of code can and should be tested in isolation.  Any dependencies should be replaced with appropriate [test doubles](http://www.martinfowler.com/bliki/TestDouble.html), in order that your test asserts nothing about the behavior of other units of code.  Otherwise, your tests will be unnecessarily brittle, with dependencies on large amounts of code beyond the subject under test (SUT) &mdash; and failures elsewhere in the codebase will cause cascading failures across your unit tests, making it hard to determine the source of errors.
 
 ## 2. Write atomic tests
 
-A single test which tries to assert everything it can about the SUT isn't very useful - because if one test fails it can have a domino effect on the assertions which follow it, making it hard to infer anything meaningful from the remainder of the test cases.  More problematic, though, is that without being extremely careful to manually tear down and setup variables and object states, it can be difficult to be sure that passing tests are valid.
+A single test which tries to assert everything it can about the SUT isn't very useful &mdash; because if one test fails it can have a domino effect on the assertions which follow it, making it hard to infer anything meaningful from the remainder of the test cases.  More problematic than that, though, is that without being extremely careful to manually tear down and setup variables and object states, it can be difficult to be sure that all passing tests are valid, because, as the state of the test subject changes through the course of the test, it's hard to be sure that the setup step correctly returns it to the state expected by each assertion.
 
 {% highlight ruby %}
 describe "#find", ->
@@ -80,3 +82,4 @@ describe "#add", ->
 {% endhighlight %}
      
 With this approach, you can refactor your implementation as you like, safe in the knowledge that your tests will continue to pass or fail according to the intended behavior of the class.
+

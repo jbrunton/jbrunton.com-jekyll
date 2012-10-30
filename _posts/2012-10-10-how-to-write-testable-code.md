@@ -4,17 +4,36 @@ title: How To Write Testable Code
 tags:
     - Software Design
     - Software Testability
+    - Unit Tests
 ---
 
-Three rules of thumb for writing testable code.
+In my post [Principles of Good Software Design](/blog/2012/10/08/principles-of-good-software-design), I outlined the key principles which I think underpin all good code.  This post continues the theme (reiterating a few of the same points), but from the point of view of what it takes to write code which is easily testable.
+
+For clarity, I should point out that I'm using *testable* in this post to mean *unit-testable*.  Writing *feature tests* and *integration tests* throws up different challenges &mdash; but if we write our code to be unit testable then we'll be in a much better start place to implement these other kinds of tests later.
+
+## What are we aiming for?
+
+It's worth quickly considering what it means for code to be *easily testable*, so that we're clear about what our goals (and the advantages of testing code) are:
+
+* **High test coverage**: we should be testing every discrete unit of code &mdash; that is, for every problem we solve in code, we want to test that we've solved it correctly.  Our unit tests will therefore give us 
+* **Robust tests**: failures should highlight incorrect code (not merely changes); and a single failure should not cascade across other test suites.
+* **Easy to write tests**: writing new tests for new or modified code should be a breeze.  There should be minimal setup, and it should be easy to understand what to test and how to test it.
+
+Here, then, is what I strive for when writing application code, in order that it should meet the above criteria.
 
 ## 1. Solve each problem in isolation
 
+two potential problems:
+- low test coverage - cannot test individual problems
+- may have large number of outputs/consequences - requiring large number of assertions
+
 In OOP terms, avoid [God classes](http://en.wikipedia.org/wiki/God_object).  In functional terms, prefer small, composable functions over lengthy and complicated ones.  Whatever paradigm you're working with: each unit of code should solve one problem.
 
-The reason for this is simple: god classes (or god functions) are "black box" objects.  They either work or they don't, but the component pieces of their implementations are hidden from site, so can't be tested.  (Neither can they be [reused or easily reasoned about](/blog/2012/10/15/principles-of-good-software-design), but that's not the criticism we're concerned about here.)
+The reason for this is simple: god classes (or god functions) are "black box" objects.  They either work or they don't, but the component pieces of their implementations are hidden from site, so can't be tested.  (Neither can they be [reused or easily reasoned about](/blog/2012/10/08/principles-of-good-software-design), but that's not the criticism we're concerned about here.)
 
-In order to provide good test coverage, we have to be able to test the component pieces of our application 
+In order to provide good test coverage, we have to be able to test the component pieces of our application.
+
+- also: god classes/functions more likely to have large numbers of outputs - require large numbers of assertions - 
 
 2. Avoid singletons/monads
 
