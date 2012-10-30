@@ -61,159 +61,103 @@
 
         </p>
 
-        <ul>
-<li><p>Complexity in software is perceived as the number
-of interacting elements within a software system, the
-internal structure of these elements, and the number
-and nature of interdependencies among them [R. Taylor, N. Medvidovic and E. Dashofy,  Software
-Architecture: Foundations, Theory and Practice,
-Hoboken, NJ: John Wiley &amp; Sons, 2009.]</p></li>
-<li><p>definition of complexity?</p>
+        <h2>The goals of good software design</h2>
+
+<p>To reiterate what I've said elsewhere on this site, the benefits of well designed code are clear: good code is that which is readable, maintainable and testable. And code with such qualities has very real benefits for a business: it's cheaper to develop, safer to change, and easier to hire and on-board new engineers.</p>
+
+<p>Let's quickly outline what we have in mind when we talk about these qualities of a good codebase:</p>
 
 <ul>
-<li>variation - see 'SOFTWARE  COMPLEXITY  MEASUREMENT ' [http://sunnyday.mit.edu/16.355/kearney.pdf] and Wikipedia [http://en.wikipedia.org/wiki/Programming_complexity]</li>
-</ul>
-</li>
-<li>definition of incidental/accidental complexity?
-
-<ul>
-<li>several - maybe conflicting?
-
-<ul>
-<li>http://weblog.raganwald.com/2006/12/economizing-can-be-penny-wise-and.html</li>
-<li>'Relates to difficulties a programmer faces due to the chosen software engineering tools' [wiki]</li>
-<li>'readable codebase' [http://infiniteundo.com/post/19910636303/intrinsic-and-incidental-complexity]</li>
-</ul>
-</li>
-<li>consider what is most important to readability and maintainability: incidental <em>to the problem at hand</em>
-
-<ul>
-<li>BUT consider: over-abstracted nature of e.g. Java enterprise apps.  unnecessary generality or over-abstraction - how to defined?  too far removed from problem domain - introduces further incidental complexity (compare with the kind introduced by design patterns?).
-(  - what are the others?  are any others relevant?  maybe note distinct related types of incidental complexity.)</li>
-</ul>
-</li>
-</ul>
-</li>
+<li><strong>Readability</strong>: if I look at a unit of code, can I easily understand it?</li>
+<li><strong>Maintainability</strong>: if I modify a unit of code, will all dependent units of code change their behavior consistently?  Will I have to make further changes across unrelated pieces of code, because the first unit of code is not authoritative in the system?  Can I easily refactor and generalize code, or is it too tightly coupled?</li>
+<li><strong>Testability</strong>: can I quickly write effective unit and feature tests?</li>
 </ul>
 
 
-<p>Over the years I've tried to distil the ideas I've had which, in my opinion, underpin all good software design.  Irrespective of the language, framework or codebase you're working across, well designed code should always respect these principles:</p>
+<p>Taking these as our three overarching goals for good software design, how do we achieve these aims?  What are the principles that underpin all well engineered solutions?  What are the signs we should be looking for that might indicate our codebase is below par, and how should we address them?</p>
 
-<h2>1. Avoid incidental complexity.</h2>
+<h2>The basic principles</h2>
 
-<p>Or, in full:</p>
-
-<blockquote><p>Avoid incidental complexity in application code in order to focus on solving the inherent complexity of the problem at hand.</p></blockquote>
-
-<p>http://weblog.raganwald.com/2006/12/economizing-can-be-penny-wise-and.html</p>
-
-<ul>
-<li>For code which is literally</li>
-</ul>
-
-
-<p>This can be stated in a few equivalent ways:</p>
-
-<blockquote><p>Each unit of code should solve one problem at a time</p></blockquote>
-
-<p>Each unit of code should solve one problem at a time.  (This can also be phrased as: avoid incidental complexity in application code in order to focus on solving the inherent complexity of the problem at hand.)</p>
-
-<blockquote><ol>
-<li>Each problem should be solved only once.</li>
-</ol>
-</blockquote>
-
-<p>In other words: the <a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY</a> principle.)</p>
-
-<blockquote><ol>
-<li>Code without tests is already broken.</li>
-</ol>
-</blockquote>
-
-<p>Or at least, it will be soon.</p>
-
-<h2>Avoiding incidental complexity</h2>
-
-<p>The last two of these principles (write DRY code and write tests) have been well understood by the software community for a long time.</p>
-
-<p>The first is a little more subtle, and I'm not aware of a catchy name for the principle, so I'll refer to it as: "avoid incidental complexity".</p>
-
-<ul>
-<li>explain what it means</li>
-<li>explain equivalence.</li>
-</ul>
-
-
-<p>In effect, what it says is that clear, maintainable software should avoid polluting a unit of code with "noise" - all the code should be concerned with solving the problem at hand, rather than the incidental quirks of the particular implementation.</p>
-
-<p>Why?
-- likely to be reused in future - and more likely to be reusable if a general interface is defined (e.g. having a filter function, as opposed to iteration and boolean check)
-- likely to be more testable - by factoring out such code, you can test it in isolation (and this provide better code coverage which will flag problems more directly)
-- clarity - break down the problem into individual components and solve them individually</p>
-
-<p>clearly decomposing our code into distinct solutions to well-defined problems.  thus, each can be written, tested, generalized and reasoned about individually.  this is the crux of making code maintainable and refactorable, and also helps us strike the right balance between how much to refactor right now: the answer is in fact to ensure separation between problems in the first place, each of which can then be generalized, and commonalities factored out, in isolation.</p>
-
-<p>For example, consider this JavaScript function:</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="kd">function</span> <span class="nx">selectedItems</span><span class="p">(</span><span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">k</span> <span class="o">&lt;</span> <span class="nx">items</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">items</span><span class="p">[</span><span class="nx">k</span><span class="p">].</span><span class="nx">selected</span><span class="p">())</span> <span class="p">{</span>
-            <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">items</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
-
-<p>The problem the function is solving for is to filter a list to exclude items for which <code>selected()</code> evaluates to false.  (It should be fairly clear where this example is going, but bear with me while I emphasize the key motivations for refactoring here.)</p>
-
-<p>The problem with the implementation of this function is that there's plenty of <em>incidental complexity</em> to it: the <code>results</code> variable, the iteration loop and variable and the building of the array are all incidental to the way in which we build the filtered list, and not inherent to the problem of specifying a way to filter.  Thus our code suffers from two problems:</p>
+<p>I find it most useful to start with two foundational principles from which all our goals (and related tenets of software engineering) follow.  These are:</p>
 
 <ol>
-<li><p>The signal-to-noise ratio is high: our code is far from being as concise as it could be, because of the incidental complexity.</p></li>
-<li><p>Filtering is a pretty useful operation: if we factor it out, we can test the code in isolation, and make the function available for reuse in the future.</p></li>
+<li>Keep your code <strong>DRY</strong>.</li>
+<li>Avoid <strong>incidental complexity</strong>.</li>
 </ol>
 
 
-<p>Thus, we end up with two functions, both of which are solving a single problem:</p>
+<p>Briefly (I will elaborate on all these points below): clarity of code follows from avoiding incidental complexity; DRY code is inherently maintainable.  And in order to achieve these two properties, we must first structure our application so that it is loosely coupled and strongly cohesive; we must ensure we solve programming problems using patterns and paradigms appropriate for the problem domain; and we must avoid black-box "God classes" and methods by decomposing complex units of code with a high cyclomatic complexity.  Finally, once we have achieved these properties, testability drops right out.</p>
 
-<div class="highlight"><pre><code class="javascript"><span class="kd">function</span> <span class="nx">filter</span><span class="p">(</span><span class="nx">items</span><span class="p">,</span> <span class="nx">predicate</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">k</span> <span class="o">&lt;</span> <span class="nx">items</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">predicate</span><span class="p">(</span><span class="nx">items</span><span class="p">[</span><span class="nx">k</span><span class="p">]))</span> <span class="p">{</span>
-            <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">items</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
-<span class="p">}</span>
+<p>Here's a visual diagram (the goals are in red, the design principles are in blue, and an arrow from one item to another indicates that the first requires the second to hold):</p>
 
-<span class="kd">function</span> <span class="nx">selectedItems</span><span class="p">(</span><span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">filter</span><span class="p">(</span><span class="nx">items</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">item</span><span class="p">.</span><span class="nx">selected</span><span class="p">();</span>
-    <span class="p">});</span>
-<span class="p">}</span>
-</code></pre>
-</div>
+<p><a target="_blank" href="/public/images/principles-of-software-design.png">
+<img class="prettyimg" alt="Principles of SOftware Design" src="/public/images/principles-of-software-design.png" />
+</a></p>
+
+<p>Now to examine these principles in detail.</p>
+
+<h2>1. Keep your code DRY</h2>
+
+<p>The basic idea behind what Benjamin C. Pierce calls the <em>Abstraction Principle</em> is well understood by most developers:</p>
+
+<blockquote><p>Each significant piece of functionality in a program should be implemented in just one place in the source code. Where similar functions are carried out by distinct pieces of code, it is generally beneficial to combine them into one by <em>abstracting out</em> the varying parts.</p>
+
+<p><cite>Benjamin C. Pierce, <em><a href="http://www.cis.upenn.edu/~bcpierce/tapl/">Types And Programming Languages</a></em>, MIT Press</cite></p></blockquote>
+
+<p>Avoiding duplication is at the heart of writing maintainable software.  But the DRY principle has greater scope than even that:</p>
+
+<blockquote><p>DRY says that every piece of system knowledge should have one authoritative, unambiguous representation. Every piece of knowledge in the development of something should have a single representation. A system's knowledge is far broader than just its code. It refers to database schemas, test plans, the build system, even documentation.</p>
+
+<p><cite><em><a href="http://www.artima.com/intv/dry.html">Orthogonality and the DRY Principle</a></em>, a conversation with Andy Hunt and Dave Thomas</cite></p></blockquote>
+
+<p>Most systems I've worked with are far from completely DRY in this regard: knowledge is redefined across the data schema, data model, and frequently across various interfaces too.  However, accepting that there are degrees of DRYness, and that developing <em>completely</em> DRY code often requires a not insignificant investment in code generator tools (or other means to translate knowledge across tiers in an n-tier application), the benefits of at least some degree of abstraction are clear.  Wikipedia puts it well:</p>
+
+<blockquote><p>When the DRY principle is applied successfully, a modification of any single element of a system does not require a change in other logically unrelated elements. Additionally, elements that are logically related all change predictably and uniformly, and are thus kept in sync.</p>
+
+<p>Wikipedia</p></blockquote>
+
+<h3>Coupling</h3>
+
+<blockquote><p>Coupling is the degree to which each program module relies on each one of the other modules.</p>
+
+<p><cite><a href="http://en.wikipedia.org/wiki/Coupling_(computer_programming">Wikipedia entry on <em>Coupling</em></a>)</p></blockquote>
+
+<p>Consider the effect of a high degree of coupling on our application.  As soon as we introduce a high level of coupling between modules, the difficulty of managing dependencies starts to impede our ability to abstract out commonalities.  Thus, loose coupling is what enables abstraction or DRY code: it is a requisite of maintaining a DRY codebase.</p>
+
+<h2>2. Avoid incidental complexity</h2>
+
+<p>In an earlier post on <a href="/blog/2012/10/04/software-complexity/">Software Complexity</a> I examined why <em>incidental complexity</em> is a useful intuitive notion of the kind of software complexity we should avoid, and I gave my own definition for how I think about it:</p>
+
+<blockquote><p>Incidental complexity is anything which distracts from solving <em>the problem at hand</em>.</p></blockquote>
+
+<p>I'm currently of the opinion that there are three distinct causes of incidental complexity:</p>
+
+<ol>
+<li><p>The application lacks cohesion: modules aren't grouped according to function, which makes it hard to find and understand external dependencies of a unit of code.  To put it another way: modules which aren't cohesive have a higher incidental complexity, because they solve a variety of unrelated problems.</p></li>
+<li><p>The programming problem at hand isn't being solved with the most appropriate "phrasing" (i.e. the choices of data structures, algorithms or language paradigm may have been poor; or the limitations of the language itself may be giving rise to incidental complexity).</p></li>
+<li><p>Multiple problems are being solved at once (in a single class or method) &mdash; i.e. subproblems of the problem are being solved in the same unit of code, adding significant background noise.</p></li>
+</ol>
 
 
-<p>The benefits are then:</p>
+<p>Any of these three will add obfuscation to the code, making it harder to reason about; they should all be avoided.</p>
+
+<h2>Testability</h2>
+
+<p>Once we've achieved code which satisfies all of the above, we should find our code is immediately testable:</p>
 
 <ul>
-<li>We can reuse <code>filter</code> across other units of code.</li>
-<li>Our implementation of <code>selectedItems</code> is clearer (as will be any other client sites of <code>filter</code>).</li>
-<li><p>We can test the two functions in isolation - and thus it will be easier to identify the nature of any test failures.</p></li>
-<li><p>one of the skills a good engineer should acquire is seeing how to decompose a problem into its component parts.  this is why some exposure to functional programming can be useful: it helps one see how to literally compose functions.</p></li>
+<li>We've decomposed solutions to distinct problems into distinct units of code.  Thus, we should be able to keep our tests orthogonal, we should be able to achieve high test coverage, and we should be able to clearly define expected outcomes on the individual units of code.</li>
+<li>We've reduced dependencies through a loosely coupled architecture, so it should be straightforward to use test doubles in our tests.</li>
 </ul>
 
 
-<h2>A Corollary: Design Patterns</h2>
+<h2>A virtuous circle</h2>
 
-<p>In light of this, it's interesting to note that use of design patterns sometimes introduces undesirable, incidental complexity to a codebase.  Sometimes this may be unavailable, and may be a reflection of the limits of the language being used.  But frequently it should be possible to make the use of design patterns more transparent by hiding them below more readable interfaces.</p>
+<p>A happy outcome of following the above principles is that each one positively reinforces the others.  For example:
+* Writing tests will often highlight flaws in code (such as tight coupling) which would impede abstraction.
+* Decomposing problems (to reduce incidental complexity) improve testability of the code by providing distinct interfaces to test against; and it will facilitate abstraction, as it will simplify identification of the individual authoritative representations of system knowledge.</p>
 
-<p>We can at this point pause to consider an important differentiator between design patterns: whether or not they are introducing incidental complexity to a problem, because they are addressing the limits of the underlying language (e.g. the visitor pattern, acting as a poor man's multiple-dispatch - which is never needed in a language with pattern matching).  Contrast this with the MVC pattern, which serves as a pattern to structure an application in a logical, loosely coupled manner, and you can see these two patterns are in fact performing very different functions.</p>
+<p>The principles are thus mutually reinforcing.</p>
 
 
         
@@ -221,7 +165,7 @@ Hoboken, NJ: John Wiley &amp; Sons, 2009.]</p></li>
             
             <ul class="posts">
 
-    <li><span id="date">14 Oct 2012</span> &raquo; <a href="/blog/2012/10/14/software-complexity">Avoid Incidental Complexity</a></li>
+    <li><span id="date">04 Oct 2012</span> &raquo; <a href="/blog/2012/10/04/software-complexity">Avoid Incidental Complexity</a></li>
 
     <li><span id="date">21 Oct 2012</span> &raquo; <a href="/blog/2012/10/21/introducing-frappuccino">Introducing Frappuccino</a></li>
 

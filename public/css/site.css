@@ -140,7 +140,7 @@ nav ul a:last-child {
 }
 
 .box .content a {
-    color: #888;
+    color: #999;
 }
 
 .box .content a:hover {
@@ -168,11 +168,11 @@ footer p {
 }
 
 footer p a.link {
-    color: #888;
+    color: #999;
 }
 
 footer p a.link:hover {
-    color: #AAA;
+    color: #888;
 }
 
 .highlight, blockquote {
@@ -192,6 +192,11 @@ pre {
     font-size: 13px;
     line-height: 18px;
     margin: 0;
+}
+
+.prettyimg {
+    width: 100%;
+    box-shadow: 1px 1px 8px rgba(127, 127, 127, .6);
 }
 
 blockquote p {
