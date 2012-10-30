@@ -19,7 +19,7 @@ title: Software Design
         <p>I'm particularly interested in the application of dependency injection in order to achieve highly testable and platform-independent code.  I've been experimenting with how best to combine proven design patterns for structuring JavaScript code with DI, and also a Rails-like DSL.  The project is available on github:
         
         <ul>
-            <li><a href="https://github.com/jbrunton/frappuccino-core">frappuccino-core</a> is the core framework gem, including a DI container, DSL for structuring domain models, and patterns for writing loosely coupled, modular applications.
+            <li><a href="http://jbrunton.github.com/frappuccino-core/">frappuccino-core</a> is the core framework gem, including a DI container, DSL for structuring domain models, and patterns for writing loosely coupled, modular applications.
             <li><a href="https://github.com/jbrunton/frappuccino-demo">frappuccino-demo</a> is a demo application, with a readme which highlights some of the most notable features of the framework.  Take a look here for an introduction.
         </ul>
         
