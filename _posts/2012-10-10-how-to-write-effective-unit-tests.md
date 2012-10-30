@@ -16,6 +16,7 @@ Well designed units of code can and should be tested in isolation.  Any dependen
 
 A single test which tries to assert everything it can about the SUT isn't very useful - because if one test fails it can have a domino effect on the assertions which follow it, making it hard to infer anything meaningful from the remainder of the test cases.  More problematic, though, is that without being extremely careful to manually tear down and setup variables and object states, it can be difficult to be sure that passing tests are valid.
 
+{% highlight ruby %}
 describe "#find", ->
 
     it "retrieves users by id", ->
@@ -24,6 +25,7 @@ describe "#find", ->
         
         user = collection.search("dave")
         expect(user).toBeDefined()
+{% endhighlight %}
     
 it "does this other thing", ->
     app.other_thing()

@@ -1,10 +1,11 @@
 ---
 layout: default
+title: Home
 ---
 
 <div class="clearfix">
     <div class="two columns">
-        <h2>Recent Posts:</h2>
+        <h2>Recent Posts</h2>
 
         {% assign posts_list = site.posts %}
         {% include posts_list.html %}
@@ -12,7 +13,7 @@ layout: default
     <div class="one column sidebar">
         <p class="tags">Browse:
         {% for tag in site.tags %}
-            <span class="tag"><a href="/tag/{{ tag[0] | url_encode }}">{{ tag[0] }}</a></span>
+            <span class="tag"><a href="/blog/tag/{{ tag[0] | cgi_escape }}">{{ tag[0] }}</a></span>
         {% endfor %}
         </p>
     </div>

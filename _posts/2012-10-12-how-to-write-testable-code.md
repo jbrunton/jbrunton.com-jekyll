@@ -10,9 +10,9 @@ Three rules of thumb for writing testable code.
 
 ## 1. Solve each problem in isolation
 
-In OOP terms, avoid [God classes](http://en.wikipedia.org/wiki/God_object).  In functional terms, prefer small, composable functions to the implementation of lengthy and complicated ones.  Whatever paradigm you're working with: each unit of code should solve one problem.
+In OOP terms, avoid [God classes](http://en.wikipedia.org/wiki/God_object).  In functional terms, prefer small, composable functions over lengthy and complicated ones.  Whatever paradigm you're working with: each unit of code should solve one problem.
 
-The reason for this is simple: god classes (or god functions) are "black box" objects.  They either work or they don't, but the component pieces of their implementations are hidden from site, so can't be tested.  (Neither can they be [reused or easily reasoned about](TODO: link to blog), but that's not the criticism we're concerned about here.)
+The reason for this is simple: god classes (or god functions) are "black box" objects.  They either work or they don't, but the component pieces of their implementations are hidden from site, so can't be tested.  (Neither can they be [reused or easily reasoned about](/blog/2012/10/15/principles-of-good-software-design), but that's not the criticism we're concerned about here.)
 
 In order to provide good test coverage, we have to be able to test the component pieces of our application 
 

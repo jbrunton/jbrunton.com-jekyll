@@ -50,9 +50,9 @@
         <p class="tags">Tags:
             
             
-    <span class="tag"><a href="/blog/tag/Software%20Testability">Software Testability</a></span>
+    <span class="tag"><a href="/blog/tag/Software+Testability">Software Testability</a></span>
 
-    <span class="tag"><a href="/blog/tag/Unit%20Tests">Unit Tests</a></span>
+    <span class="tag"><a href="/blog/tag/Unit+Tests">Unit Tests</a></span>
 
 
 
@@ -69,15 +69,17 @@
 
 <p>A single test which tries to assert everything it can about the SUT isn't very useful - because if one test fails it can have a domino effect on the assertions which follow it, making it hard to infer anything meaningful from the remainder of the test cases.  More problematic, though, is that without being extremely careful to manually tear down and setup variables and object states, it can be difficult to be sure that passing tests are valid.</p>
 
-<p>describe "#find", -></p>
+<div class="highlight"><pre><code class="ruby"><span class="n">describe</span> <span class="s2">&quot;#find&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
 
-<pre><code>it "retrieves users by id", -&gt;
-    user = collection.find(1)
-    expect(user).toBeDefined()
-
-    user = collection.search("dave")
-    expect(user).toBeDefined()
+    <span class="n">it</span> <span class="s2">&quot;retrieves users by id&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">)</span><span class="o">.</span><span class="n">toBeDefined</span><span class="p">()</span>
+        
+        <span class="n">user</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;dave&quot;</span><span class="p">)</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">)</span><span class="o">.</span><span class="n">toBeDefined</span><span class="p">()</span>
 </code></pre>
+</div>
+
 
 <p>it "does this other thing", -></p>
 

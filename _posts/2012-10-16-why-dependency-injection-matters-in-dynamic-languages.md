@@ -10,7 +10,7 @@ One of the foundational principles of good software design is that code should b
 
 As a pattern, DI is well established in a number of frameworks for statically typed environments (such as Microsoft's [Unity](http://unity.codeplex.com/) container for .NET applications, or the lightweight [Picocontainer](http://picocontainer.codehaus.org/) for Java).  But do we really need to use the pattern in dynamic languages, such as JavaScript, when the concept of static types doesn't really apply?
 
-The answer is: almost definitely!  Let's take a look at the ways in which DI helps us write robust, testable, loosely coupled applications &mdash; and why these techniques are relevant irrespective of the typing system.
+The answer is: almost definitely!  And there are a few frameworks which are aware of this &mdash; but they're still somewhat in the minority.  So let's take a look at the ways in which DI helps us write robust, testable, loosely coupled applications &mdash; and why these techniques are relevant irrespective of the typing system.
 
 ## 1. Resolve concrete types at runtime
 
