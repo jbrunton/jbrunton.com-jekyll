@@ -4,6 +4,7 @@ title: Principles of Good Software Design
 tags:
     - Software Design
     - Software Testability
+    - Software Complexity
 ---
 
 
