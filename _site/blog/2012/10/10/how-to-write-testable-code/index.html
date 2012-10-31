@@ -80,86 +80,74 @@
 
 <h2>1. Solve each problem in isolation</h2>
 
-<p>two potential problems:
-- low test coverage - cannot test individual problems
-- may have large number of outputs/consequences - requiring large number of assertions</p>
-
 <p>In OOP terms, avoid <a href="http://en.wikipedia.org/wiki/God_object">God classes</a>.  In functional terms, prefer small, composable functions over lengthy and complicated ones.  Whatever paradigm you're working with: each unit of code should solve one problem.</p>
 
 <p>The reason for this is simple: god classes (or god functions) are "black box" objects.  They either work or they don't, but the component pieces of their implementations are hidden from site, so can't be tested.  (Neither can they be <a href="/blog/2012/10/08/principles-of-good-software-design">reused or easily reasoned about</a>, but that's not the criticism we're concerned about here.)</p>
 
-<p>In order to provide good test coverage, we have to be able to test the component pieces of our application.</p>
+<h2>2. Avoid singletons/monads</h2>
 
-<ul>
-<li><p>also: god classes/functions more likely to have large numbers of outputs - require large numbers of assertions -</p></li>
-<li><p>Avoid singletons/monads</p></li>
-</ul>
+<p>It's desirable for us to keep our tests atomic (see <a href="/blog/2012/10/12/how-to-write-effective-unit-tests/">How To Write Effective Unit Tests</a>).  To see why, suppose we have a single monad instance of our application:</p>
 
+<div class="highlight"><pre><code class="ruby"><span class="n">describe</span> <span class="s2">&quot;window.app&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
 
-<p>This is required in order that we can <a href="TODO:%20link">write atomic tests</a>.</p>
-
-<p>describe "window.app", -></p>
-
-<pre><code>it "does this one thing when initialized", -&gt;
-    app.init()
-    expect(app.one_thing).toBe(whatever)
-
-it "does this other thing when initialized", -&gt;
-    app.init() # already initialized
-    expect(app.other_thing).toBe(whatever)
+    <span class="n">it</span> <span class="s2">&quot;does this one thing when initialized&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">one_thing</span><span class="p">)</span><span class="o">.</span><span class="n">toBe</span><span class="p">(</span><span class="n">whatever</span><span class="p">)</span>
+        
+    <span class="n">it</span> <span class="s2">&quot;does this other thing when initialized&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">init</span><span class="p">()</span> <span class="c1"># already initialized</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">other_thing</span><span class="p">)</span><span class="o">.</span><span class="n">toBe</span><span class="p">(</span><span class="n">whatever</span><span class="p">)</span>
 </code></pre>
+</div>
 
-<p>What happens if we try to initialize the application object twice?  It might be safe.  It might error.  It might leave the object in an invalid state.  We can't be sure, so our second test might fail just because our init() method isn't idempotent (rather than because of a genuine bug).</p>
+
+<p>Because it's a monad, we can't reset the state of the <code>app</code> object between tests.  What happens if we try to initialize the app object twice?  It might be safe.  It might error.  It might leave the object in an invalid state.  We can't be sure, so our second test might fail just because our <code>init()</code> method isn't idempotent (rather than because of a genuine bug).</p>
 
 <p>Better to be able to instantiate an application for each test:</p>
 
-<p>describe "Application", -></p>
+<div class="highlight"><pre><code class="ruby"><span class="n">describe</span> <span class="s2">&quot;Application&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
 
-<pre><code>beforeEach: -&gt;
-    app = new Application
-
-it "does this one thing when initialized", -&gt;
-    app.init()
-    expect(app.one_thing).toBe(whatever)
-
-it "does this other thing when initialized", -&gt;
-    app.init() # new instance - safe to initialize
-    expect(app.other_thing).toBe(whatever)
+    <span class="n">beforeEach</span><span class="p">:</span> <span class="o">-&gt;</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">Application</span>
+        
+    <span class="n">it</span> <span class="s2">&quot;does this one thing when initialized&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">one_thing</span><span class="p">)</span><span class="o">.</span><span class="n">toBe</span><span class="p">(</span><span class="n">whatever</span><span class="p">)</span>
+        
+    <span class="n">it</span> <span class="s2">&quot;does this other thing when initialized&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">init</span><span class="p">()</span> <span class="c1"># new instance - safe to initialize</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">other_thing</span><span class="p">)</span><span class="o">.</span><span class="n">toBe</span><span class="p">(</span><span class="n">whatever</span><span class="p">)</span>
 </code></pre>
+</div>
 
-<ol>
-<li>Make it easy to configure and run your test subjects</li>
-</ol>
 
+<h2>3. Make it easy to configure and run your test subjects</h2>
 
 <p>What this typically comes down to is: write loosely coupled code, and be careful with how you specify dependencies.</p>
 
 <p>What you want to avoid is the situation where every test requires every dependency of the subject under test (SUT) to be explicitly replaced with some suitable test double.  For example, this is bad:</p>
 
 <pre><code>beforeEach: -&gt;
+    # figure out and double every freaking last dependency
     repository = new TestRepository
     renderer = new TestRenderer        
     # etc.
 
-    app = new Application(repository)
+    app = new Application(repository, renderer, ...)
 
 it "is awkward to configure the environment for testing", -&gt;
     app.run()
 </code></pre>
 
-<p>Code like this typically requires that every time you add a dependency to a class, first you have to locate all the feature tests which involve that class, and then add in suitable test doubles; and every time you write a new test, you have to figure out all of the dependencies across all of the classes involved, and ensure they're suitably mocked.  In other words, there's a tight coupling between each test and the dependencies of the subject under test (SUT) - not just with the SUT itself.</p>
-
-<p>In other words, our tests will become increasingly difficult to write and maintain as the complexity of our codebase grows.</p>
+<p>Code like this typically requires that every time you add a dependency to a class, first you have to locate all the feature tests which involve that class, and then add in suitable test doubles; and every time you write a new test, you have to figure out all of the dependencies across all of the classes involved, and ensure they're suitably doubled too.  In other words, there's a tight coupling between each test and the dependencies of the subject under test (SUT) - not just with the SUT itself.</p>
 
 <p>To avoid this, we should consider:</p>
 
 <ul>
-<li>Inversion of control and dependency injection patterns (see [TODO: link]).</li>
+<li>Inversion of control and dependency injection patterns (see <a href="/blog/2012/10/16/why-dependency-injection-matters-in-dynamic-languages/">Why Dependency Injection Matters In Dynamic Languages</a>), so that dependencies can be more easily configured for the appropriate environment.</li>
 <li>Some boilerplate code for our tests, to quickly and DRY-ly setup and tear down test subjects.</li>
 </ul>
 
-
-<p>What we want minimally is a way to structure our tests such that at most changes to underlying dependencies only effect a single piece of boilerplate code - and preferable, none of the test code at all.</p>
 
 
         

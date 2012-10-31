@@ -23,22 +23,15 @@ Here, then, is what I strive for when writing application code, in order that it
 
 ## 1. Solve each problem in isolation
 
-two potential problems:
-- low test coverage - cannot test individual problems
-- may have large number of outputs/consequences - requiring large number of assertions
-
 In OOP terms, avoid [God classes](http://en.wikipedia.org/wiki/God_object).  In functional terms, prefer small, composable functions over lengthy and complicated ones.  Whatever paradigm you're working with: each unit of code should solve one problem.
 
 The reason for this is simple: god classes (or god functions) are "black box" objects.  They either work or they don't, but the component pieces of their implementations are hidden from site, so can't be tested.  (Neither can they be [reused or easily reasoned about](/blog/2012/10/08/principles-of-good-software-design), but that's not the criticism we're concerned about here.)
 
-In order to provide good test coverage, we have to be able to test the component pieces of our application.
+## 2. Avoid singletons/monads
 
-- also: god classes/functions more likely to have large numbers of outputs - require large numbers of assertions - 
+It's desirable for us to keep our tests atomic (see [How To Write Effective Unit Tests](/blog/2012/10/12/how-to-write-effective-unit-tests/)).  To see why, suppose we have a single monad instance of our application:
 
-2. Avoid singletons/monads
-
-This is required in order that we can [write atomic tests](TODO: link).  
-
+{% highlight ruby %}
 describe "window.app", ->
 
     it "does this one thing when initialized", ->
@@ -48,11 +41,13 @@ describe "window.app", ->
     it "does this other thing when initialized", ->
         app.init() # already initialized
         expect(app.other_thing).toBe(whatever)
+{% endhighlight %}
         
-What happens if we try to initialize the application object twice?  It might be safe.  It might error.  It might leave the object in an invalid state.  We can't be sure, so our second test might fail just because our init() method isn't idempotent (rather than because of a genuine bug).
+Because it's a monad, we can't reset the state of the ```app``` object between tests.  What happens if we try to initialize the app object twice?  It might be safe.  It might error.  It might leave the object in an invalid state.  We can't be sure, so our second test might fail just because our ```init()``` method isn't idempotent (rather than because of a genuine bug).
 
 Better to be able to instantiate an application for each test:
 
+{% highlight ruby %}
 describe "Application", ->
 
     beforeEach: ->
@@ -65,31 +60,29 @@ describe "Application", ->
     it "does this other thing when initialized", ->
         app.init() # new instance - safe to initialize
         expect(app.other_thing).toBe(whatever)
+{% endhighlight %}
 
-3. Make it easy to configure and run your test subjects
+## 3. Make it easy to configure and run your test subjects
 
 What this typically comes down to is: write loosely coupled code, and be careful with how you specify dependencies.
 
 What you want to avoid is the situation where every test requires every dependency of the subject under test (SUT) to be explicitly replaced with some suitable test double.  For example, this is bad:
 
     beforeEach: ->
+        # figure out and double every freaking last dependency
         repository = new TestRepository
         renderer = new TestRenderer        
         # etc.
         
-        app = new Application(repository)
+        app = new Application(repository, renderer, ...)
     
     it "is awkward to configure the environment for testing", ->
         app.run()
 
 
-Code like this typically requires that every time you add a dependency to a class, first you have to locate all the feature tests which involve that class, and then add in suitable test doubles; and every time you write a new test, you have to figure out all of the dependencies across all of the classes involved, and ensure they're suitably mocked.  In other words, there's a tight coupling between each test and the dependencies of the subject under test (SUT) - not just with the SUT itself.
-
-In other words, our tests will become increasingly difficult to write and maintain as the complexity of our codebase grows.
+Code like this typically requires that every time you add a dependency to a class, first you have to locate all the feature tests which involve that class, and then add in suitable test doubles; and every time you write a new test, you have to figure out all of the dependencies across all of the classes involved, and ensure they're suitably doubled too.  In other words, there's a tight coupling between each test and the dependencies of the subject under test (SUT) - not just with the SUT itself.
 
 To avoid this, we should consider:
 
-* Inversion of control and dependency injection patterns (see [TODO: link]).
+* Inversion of control and dependency injection patterns (see [Why Dependency Injection Matters In Dynamic Languages](/blog/2012/10/16/why-dependency-injection-matters-in-dynamic-languages/)), so that dependencies can be more easily configured for the appropriate environment.
 * Some boilerplate code for our tests, to quickly and DRY-ly setup and tear down test subjects.
-
-What we want minimally is a way to structure our tests such that at most changes to underlying dependencies only effect a single piece of boilerplate code - and preferable, none of the test code at all.
