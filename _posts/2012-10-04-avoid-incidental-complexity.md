@@ -36,7 +36,23 @@ There's another way we can categorize complexity: by making the distinction betw
 
 > <cite>[Wikipedia entry on *Programming complexity*](http://en.wikipedia.org/wiki/Programming_complexity#Types)</cite>
 
-In my opinion, however, this isn't general enough.  Plenty of code features incidental complexity (i.e. that which is not inherent to solving the problem at hand) not because the solution could be better written in another language, but because the developer is trying to solve too many problems at once.  Consider this example:
+In my opinion, this isn't general enough.  Plenty of code features incidental complexity (i.e. that which is not inherent to solving the problem at hand) not because of the limitations of the tools, but because the implementation is not especially clean and includes unnecessary background noise.
+
+### Red, yellow and green code
+
+Reginald Braithwaite expresses this particular trait of poor code elegantly in his article [Economizing can be penny-wise and pound foolish](http://weblog.raganwald.com/2006/12/economizing-can-be-penny-wise-and.html):
+
+> Pick up the source code for a program and three highlighter markers, one green, one yellow, and one red. Go through the source. If you don't understand what something does, mark it in red. If you understand it, but it has everything to do with the accidental difficulty of the implementation and nothing to do with the inherent difficulty of the problem, mark it in yellow. And finally, if something seems to express the problem and its solution fairly directly in an manner you understand, mark it in green.
+
+> [...]
+
+> When the green is all in once place, we can look at it and verify it and think about it with our *Inherent Difficulty* hat on. And by segregating all of the yellow code into its own place, we can look at it and verify it and think about it with our Accidental Difficulty or *Implementation* hat on.
+
+Braithwaite here points out that, from the point of view of an application developer, library code is often reasoned about with the *accidental difficulty* hat on.  I would suggest there are two reasons why this might be the case.
+
+First, as suggested by the Wikipedia definition of accidental complexity: sometimes the limitations of the tools we use introduce unnecessary complexity to the implementation.  This is unavoidable, but by ensuring such cases are confined to library code, our application can remain eminently readable.
+
+Secondly, without due care, we might fail to correctly decompose our code into single responsibility classes or functions.  If we allow our code to take on multiple responsibilities then the purpose of each unit of code is diluted with distractions, as the developer is trying to solve too many problems at once.  Consider this example:
 
 {% highlight javascript %}
 function selectedItems(items) {
@@ -49,6 +65,10 @@ function selectedItems(items) {
     return results;
 }
 {% endhighlight %}
+
+The problem is easy to summarize: *pick the items for which ```selected()``` holds true*.  But the implementation complexity is increased by the background noise of the loop, iteration variable and temporary ```results``` object.  The trouble is that we're trying to solve two problems simultaneously: the one where we identify selected items, and the one where we filter a list for a given predicate.
+
+If we decompose our code to solve these two problems individually, the readability of both improves:
 
 {% highlight javascript %}
 function filter(items, predicate) {
@@ -68,48 +88,30 @@ function selectedItems(items) {
 }
 {% endhighlight %}
 
-In a blog post, Peter Rosser describes a related kind of complexity:
+### Cohesion
+
+A final cause of incidental complexity is low cohesion: by failing to group modules into functionally related units, we make it harder to identify the purpose of dependencies of our unit of code.
+
+## Defining Incidental Complexity
+
+So how then should we define this kind of complexity?
+
+In a blog post, Peter Rosser summarizes it pretty well, though he calls it system complexity:
 
 > System complexity is a property of a system that is directly proportional to the difficulty one has in comprehending the system at the level and detail necessary to make changes to the system without introducing instability or functional regressions.
 
 > <cite>[Peter Rosser, *Thoughts on software complexity*](http://blogs.msdn.com/b/peterrosser/archive/2006/06/02/softwarecomplexity.aspx)</cite>
 
-Here we're getting somewhere.  What's most critical to having a system which one can reason about, develop and maintain is to avoid local complexity.  If you can safely make local modifications, then it matters less how complex the whole application is &mdash; you don't need to understand the entire codebase all at once in order to develop new features.
+This seems a useful definition.  What's most critical to having a system which one can reason about, develop and maintain is to avoid local complexity.  If you can safely make local modifications, then it matters less how complex the whole application is: you don't need to understand the entire codebase all at once in order to develop new features.
 
-I prefer a more succinct definition for this kind of incidental complexity, however:
+However, I prefer a more succinct definition:
 
 > Incidental complexity is anything which distracts from solving *the problem at hand*.
 
-I prefer this formulation because it highlights (even without the emphasis) the multiplicity we should be concerned with: at any one point in our code, we should be solving for one problem.
+I prefer this formulation because it highlights (even without the emphasis) the multiplicity we should be concerned with: at any one point in our code, we should be solving for one problem, and we should be avoiding unnecessary background noise.  To summarize the points above, such complexity might arise for three reasons:
 
----
-
-And as we have seen, there are two/three (?) main causes of incidental complexity.  One may be that you're using the wrong algorithm, data structure or language to solve the problem domain.  However, your choice of language may be beyond your control.  (sometimes, it may be that an unnecessary level of abstraction has been reached &mdash; or an unnecessarily disruptive design pattern has been selected.  this often a reflection of the limitations of the language - e.g. visitor pattern isn't required in a language with pattern matching or multiple dispatch)
-
-The other cause is that the the solving of other problems distracts from the solution at hand.  This is something you, as a developer, always have control over.
-
-Reginald Braithwaite expresses this particular problem most elegantly in his article [Economizing can be penny-wise and pound foolish](http://weblog.raganwald.com/2006/12/economizing-can-be-penny-wise-and.html)
-
-> Pick up the source code for a program and three highlighter markers, one green, one yellow, and one red. Go through the source. If you don’t understand what something does, mark it in red. If you understand it, but it has everything to do with the accidental difficulty of the implementation and nothing to do with the inherent difficulty of the problem, mark it in yellow. And finally, if something seems to express the problem and its solution fairly directly in an manner you understand, mark it in green.
-
-> ...
-
-> When the green is all in once place, we can look at it and verify it and think about it with our *Inherent Difficulty* hat on. And by segregating all of the yellow code into its own place, we can look at it and verify it and think about it with our Accidental Difficulty or *Implementation* hat on.
-
-Braithwaite here makes a few important assertions: one, that from the context of an application developer, library code is often reasoned about with the *accidental difficulty* hat on.  This is probably fair to say: most web engineers don't have to write sorting algorithms on a regular basis, so I'd sure be scratching my head pondering the correctness of a merge sort algorithm if I had to review the implementation of one.  But in fact, someone who works on scientific modeling might find the reverse true, and might categorize the merge sort as green code, and a simple AJAX cycle as yellow.  The point is that &mdash; providing we have the requisite background knowledge about the problem we're solving for &mdash; any solution which doesn't introduce unnecessary background noise (by trying to solve different problems simultaneously) has the potential to be green: and yellow and red code is merely what happens when this noise hits unacceptable levels.
-
+1. Unsuitability of the language/tools being used to solve the problem (perhaps because of limitations; perhaps because the wrong ones have been selected).
+2. Insufficient decomposition of solutions into distinct units of code, leaving solutions to subproblems as background noise.
+3. Low cohesion.
 
 By avoiding incidental complexity, our code becomes easier to read and reason about, and easier to extend (and refactor in the future).  This is the kind of complexity it is most critical to avoid, and happily it's also one of the easiest to identify.
-
-
----
-incidental complexity:
-- incorrect choice of algorithm/solution/data structure
-  - too abstract (incorrect design pattern)
-- language limitations (design patterns)
-- complexity incidental to solution of problem (i.e. solving multiple problems simultaneously)
-
-note: avoid incidental complexity, and the others will follow?
-- solving problems individually => much easier to avoid complex branching after decomposing problem (may not reduce overall cyclomatic complexity of application- but reduces it for individual functions, making each easier to reason about individually)
-- by decomposing problems, we can increase test coverage and robustness (see writing testable code)
-- by decomposing problems, we make it easier to refactor or generalize individual units of code in the future, without cutting across other functional areas.
