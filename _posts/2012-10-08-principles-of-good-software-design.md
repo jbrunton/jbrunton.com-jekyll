@@ -66,7 +66,7 @@ Now, consider the effect of a high degree of coupling on our application.  As so
 
 ## 2. Avoid incidental complexity
 
-In an earlier post on [Software Complexity](/blog/2012/10/04/software-complexity/) I examined why *incidental complexity* is a useful intuitive notion of the kind of software complexity we should avoid, and I gave my own definition for how I think about it:
+In an earlier post on [software complexity](/blog/2012/10/04/avoid-incidental-complexity/) I examined why *incidental complexity* is a useful intuitive notion of the kind of software complexity we should avoid, and I gave my own definition for how I think about it:
 
 > Incidental complexity is anything which distracts from solving *the problem at hand*.
 
