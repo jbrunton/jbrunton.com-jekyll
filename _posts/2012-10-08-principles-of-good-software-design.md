@@ -9,7 +9,7 @@ tags:
 
 ## The goals of good software design
 
-To reiterate what I've said elsewhere on this site, there are real benefits to having designed code: good code (i.e. that which is readable, maintainable and testable) is cheaper to develop, safer to change, and hiring and on-boarding new engineers becomes much easier.
+To reiterate what I've said elsewhere on this site, there are real benefits to having well designed code: good code (i.e. that which is readable, maintainable and testable) is cheaper to develop, safer to change, and hiring and on-boarding new engineers becomes much easier.
 
 Let's quickly outline what we have in mind when we talk about these qualities of a codebase:
 
