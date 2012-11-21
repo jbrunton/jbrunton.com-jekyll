@@ -22,47 +22,41 @@ A single test which tries to assert everything it can about the SUT isn't very u
 
 Suppose I'm implementing a collection of some kind:
 
-{% highlight ruby %}
-class UsersCollection
-    constructor: ->
-        @_users = []
- 
-    add: (user) =>
-        @_users.push(user)
- 
-    remove: (user) =>
-        @_users = _.without(@_users, user)
- 
-    get: (id) =>
-        _.find @_users,
-            (user) -> user.id == id
-{% endhighlight %}
+	class UsersCollection
+	    constructor: ->
+	        @_users = []
+	 
+	    add: (user) =>
+	        @_users.push(user)
+	 
+	    remove: (user) =>
+	        @_users = _.without(@_users, user)
+	 
+	    get: (id) =>
+	        _.find @_users,
+	            (user) -> user.id == id
         
 You might want to start by testing that the add method works as expected.  Here's one possible implementation:
 
-{% highlight ruby %}
-beforeEach ->
-    collection = new UsersCollection
- 
-describe "#add", ->
- 
-    it "should add an element to the collection", ->
-        user = new User( name: "Joe" )
-        collection.add(user)
-        expect(collection._users).toEqual([user])
-{% endhighlight %}
+	beforeEach ->
+	    collection = new UsersCollection
+	 
+	describe "#add", ->
+	 
+	    it "should add an element to the collection", ->
+	        user = new User( name: "Joe" )
+	        collection.add(user)
+	        expect(collection._users).toEqual([user])
 
 The problem with this is that it tightly couples the test to the implementation of our collection.  We might later decide to use a hashmap internally, for example &mdash; but then the test will fail, because we no longer have a list called ```_users```.
 
 A better implementation will test for the expected *behavior* of the collection &mdash; e.g. that the element can now be retrieved through the classes interface as expected.
 
-{% highlight ruby %}
-describe "#add", ->
-    it "should add an element to the collection", ->
-        user = new User( id: 1, name: "Joe" )
-        collection.add(user)
-        expect(collection.get(1)).toBe(user)
-{% endhighlight %}
+	describe "#add", ->
+	    it "should add an element to the collection", ->
+	        user = new User( id: 1, name: "Joe" )
+	        collection.add(user)
+	        expect(collection.get(1)).toBe(user)
      
 With this approach, you can refactor your implementation as you like, safe in the knowledge that your tests will continue to pass or fail according to the intended behavior of the class.
 

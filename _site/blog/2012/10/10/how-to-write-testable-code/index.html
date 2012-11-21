@@ -8,7 +8,7 @@
         <script src="/public/js/google-code-prettify/prettify.js" type="text/javascript"></script>
         <script type="text/javascript">
         	$(function() {
-        		$(".highlight code").addClass("prettyprint linenums");
+        		$("pre code").addClass("prettyprint linenums");
         		prettyPrint();
         	});
         </script>
@@ -96,38 +96,34 @@
 
 <p>It's desirable for us to keep our tests atomic (see <a href="/blog/2012/10/12/how-to-write-effective-unit-tests/">How To Write Effective Unit Tests</a>).  To see why, suppose we have a single monad instance of our application:</p>
 
-<div class="highlight"><pre><code class="ruby"><span class="n">describe</span> <span class="s2">&quot;window.app&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+<pre><code>describe "window.app", -&gt;
 
-    <span class="n">it</span> <span class="s2">&quot;does this one thing when initialized&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
-        <span class="n">expect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">one_thing</span><span class="p">)</span><span class="o">.</span><span class="n">toBe</span><span class="p">(</span><span class="n">whatever</span><span class="p">)</span>
-        
-    <span class="n">it</span> <span class="s2">&quot;does this other thing when initialized&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">init</span><span class="p">()</span> <span class="c1"># already initialized</span>
-        <span class="n">expect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">other_thing</span><span class="p">)</span><span class="o">.</span><span class="n">toBe</span><span class="p">(</span><span class="n">whatever</span><span class="p">)</span>
+    it "does this one thing when initialized", -&gt;
+        app.init()
+        expect(app.one_thing).toBe(whatever)
+
+    it "does this other thing when initialized", -&gt;
+        app.init() # already initialized
+        expect(app.other_thing).toBe(whatever)
 </code></pre>
-</div>
-
 
 <p>Because it's a monad, we can't reset the state of the <code>app</code> object between tests.  What happens if we try to initialize the app object twice?  It might be safe.  It might error.  It might leave the object in an invalid state.  We can't be sure, so our second test might fail just because our <code>init()</code> method isn't idempotent (rather than because of a genuine bug).</p>
 
 <p>Better to be able to instantiate an application for each test:</p>
 
-<div class="highlight"><pre><code class="ruby"><span class="n">describe</span> <span class="s2">&quot;Application&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+<pre><code>describe "Application", -&gt;
 
-    <span class="n">beforeEach</span><span class="p">:</span> <span class="o">-&gt;</span>
-        <span class="n">app</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">Application</span>
-        
-    <span class="n">it</span> <span class="s2">&quot;does this one thing when initialized&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
-        <span class="n">expect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">one_thing</span><span class="p">)</span><span class="o">.</span><span class="n">toBe</span><span class="p">(</span><span class="n">whatever</span><span class="p">)</span>
-        
-    <span class="n">it</span> <span class="s2">&quot;does this other thing when initialized&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">init</span><span class="p">()</span> <span class="c1"># new instance - safe to initialize</span>
-        <span class="n">expect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">other_thing</span><span class="p">)</span><span class="o">.</span><span class="n">toBe</span><span class="p">(</span><span class="n">whatever</span><span class="p">)</span>
+    beforeEach: -&gt;
+        app = new Application
+
+    it "does this one thing when initialized", -&gt;
+        app.init()
+        expect(app.one_thing).toBe(whatever)
+
+    it "does this other thing when initialized", -&gt;
+        app.init() # new instance - safe to initialize
+        expect(app.other_thing).toBe(whatever)
 </code></pre>
-</div>
-
 
 <h2>3. Make it easy to configure and run your test subjects</h2>
 

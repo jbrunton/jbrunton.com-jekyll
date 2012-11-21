@@ -175,7 +175,7 @@ footer p a.link:hover {
     color: #888;
 }
 
-.highlight, blockquote {
+pre code, blockquote {
     margin: 0 0 26px 0;
     padding: 20px;
     border-left: solid 5px #DDD;
@@ -183,7 +183,8 @@ footer p a.link:hover {
     background-color: #F9F9F9;
 }
 
-.highlight {
+pre code {
+	display: block;
     width: 880px;
     color: #999;
 }

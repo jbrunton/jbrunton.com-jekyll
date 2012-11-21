@@ -31,36 +31,32 @@ The reason for this is simple: god classes (or god functions) are "black box" ob
 
 It's desirable for us to keep our tests atomic (see [How To Write Effective Unit Tests](/blog/2012/10/12/how-to-write-effective-unit-tests/)).  To see why, suppose we have a single monad instance of our application:
 
-{% highlight ruby %}
-describe "window.app", ->
-
-    it "does this one thing when initialized", ->
-        app.init()
-        expect(app.one_thing).toBe(whatever)
-        
-    it "does this other thing when initialized", ->
-        app.init() # already initialized
-        expect(app.other_thing).toBe(whatever)
-{% endhighlight %}
+	describe "window.app", ->
+	
+	    it "does this one thing when initialized", ->
+	        app.init()
+	        expect(app.one_thing).toBe(whatever)
+	        
+	    it "does this other thing when initialized", ->
+	        app.init() # already initialized
+	        expect(app.other_thing).toBe(whatever)
         
 Because it's a monad, we can't reset the state of the ```app``` object between tests.  What happens if we try to initialize the app object twice?  It might be safe.  It might error.  It might leave the object in an invalid state.  We can't be sure, so our second test might fail just because our ```init()``` method isn't idempotent (rather than because of a genuine bug).
 
 Better to be able to instantiate an application for each test:
 
-{% highlight ruby %}
-describe "Application", ->
-
-    beforeEach: ->
-        app = new Application
-        
-    it "does this one thing when initialized", ->
-        app.init()
-        expect(app.one_thing).toBe(whatever)
-        
-    it "does this other thing when initialized", ->
-        app.init() # new instance - safe to initialize
-        expect(app.other_thing).toBe(whatever)
-{% endhighlight %}
+	describe "Application", ->
+	
+	    beforeEach: ->
+	        app = new Application
+	        
+	    it "does this one thing when initialized", ->
+	        app.init()
+	        expect(app.one_thing).toBe(whatever)
+	        
+	    it "does this other thing when initialized", ->
+	        app.init() # new instance - safe to initialize
+	        expect(app.other_thing).toBe(whatever)
 
 ## 3. Make it easy to configure and run your test subjects
 
