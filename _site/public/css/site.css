@@ -185,6 +185,7 @@ footer p a.link:hover {
 
 .highlight {
     width: 880px;
+    color: #999;
 }
 
 pre {
@@ -223,4 +224,9 @@ blockquote cite:before {
 
 .tags .tag:last-child:after {
     content: '';
+}
+
+code.prettyprint li {
+	line-height: inherit;
+	font-size: inherit;
 }
