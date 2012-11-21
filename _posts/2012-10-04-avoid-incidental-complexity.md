@@ -54,39 +54,35 @@ First, as suggested by the Wikipedia definition of accidental complexity: someti
 
 Secondly, without due care, we might fail to correctly decompose our code into single responsibility classes or functions.  If we allow our code to take on multiple responsibilities then the purpose of each unit of code is diluted with distractions, as the developer is trying to solve too many problems at once.  Consider this example:
 
-{% highlight javascript %}
-function selectedItems(items) {
-    var results = [];
-    for (var k = 0; k < items.length; ++k) {
-        if (items[k].selected()) {
-            results.push(items);
-        }
-    }
-    return results;
-}
-{% endhighlight %}
+	function selectedItems(items) {
+	    var results = [];
+	    for (var k = 0; k < items.length; ++k) {
+	        if (items[k].selected()) {
+	            results.push(items);
+	        }
+	    }
+	    return results;
+	}
 
 The problem is easy to summarize: *pick the items for which ```selected()``` holds true*.  But the implementation complexity is increased by the background noise of the loop, iteration variable and temporary ```results``` object.  The trouble is that we're trying to solve two problems simultaneously: the one where we identify selected items, and the one where we filter a list for a given predicate.
 
 If we decompose our code to solve these two problems individually, the readability of both improves:
 
-{% highlight javascript %}
-function filter(items, predicate) {
-    var results = [];
-    for (var k = 0; k < items.length; ++k) {
-        if (predicate(items[k])) {
-            results.push(items);
-        }
-    }
-    return results;
-}
-
-function selectedItems(items) {
-    return filter(items, function(item) {
-        return item.selected();
-    });
-}
-{% endhighlight %}
+	function filter(items, predicate) {
+	    var results = [];
+	    for (var k = 0; k < items.length; ++k) {
+	        if (predicate(items[k])) {
+	            results.push(items);
+	        }
+	    }
+	    return results;
+	}
+	
+	function selectedItems(items) {
+	    return filter(items, function(item) {
+	        return item.selected();
+	    });
+	}
 
 ### Cohesion
 
