@@ -143,7 +143,7 @@
 <ol>
 <li><p>The application lacks cohesion: modules aren't grouped according to function, which makes it hard to find and understand external dependencies of a unit of code.  To put it another way: modules which aren't cohesive have a higher incidental complexity, because they solve a variety of unrelated problems.</p></li>
 <li><p>The programming problem at hand isn't being solved with the most appropriate "phrasing" (i.e. the choices of data structures, algorithms or language paradigm may have been poor; or the limitations of the language itself may be giving rise to incidental complexity).</p></li>
-<li><p>Multiple problems are being solved at once (in a single class or method) &mdash; i.e. subproblems of the problem are being solved in the same unit of code, adding significant background noise.</p></li>
+<li><p>Multiple problems are being solved at once (in a single class or method), adding significant background noise.  This is akin to violation of the <a href="http://en.wikipedia.org/wiki/Single_responsibility_principle">Single Responsibility Principle</a> in OOP, but there's no reason not to adhere to this in other paradigms: it's always much easier to reason about one problem at a time.</p></li>
 </ol>
 
 
@@ -192,6 +192,28 @@
 
 
         
+        
+    	<!-- START: Livefyre Embed -->
+		<div id="livefyre-comments"></div>
+		<script type="text/javascript" src="http://zor.livefyre.com/wjs/v3.0/javascripts/livefyre.js"></script>
+		<script type="text/javascript">
+		(function () {
+			var articleId = fyre.conv.load.makeArticleId(null);
+			fyre.conv.load({}, [{
+				el: 'livefyre-comments',
+				network: "livefyre.com",
+				siteId: "317231",
+				articleId: articleId,
+				signed: false,
+				collectionMeta: {
+					articleId: articleId,
+					url: fyre.conv.load.makeCollectionUrl(),
+				}
+			}], function() {});
+		}());
+		</script>
+		<!-- END: Livefyre Embed -->
+            
     </div>
 </div>
 
@@ -202,8 +224,7 @@
             <p>I work as a full-stack web and systems engineer across a variety of technologies (including JavaScript/CoffeeScript, Ruby on Rails and <a class="link" target="_blank" href="http://en.wikipedia.org/wiki/Tcl">something called TcL</a>).
             <p>My background includes .NET/WPF application development with Prism, and I have experience with a number of functional languages (including Haskell and OCaml).  One of the subjects I therefore find interesting is how, with modern languages, the best practices from these different technology stacks and paradigms can be combined to create a <a class="link" href="/blog/2012/10/21/introducing-frappuccino">best of all worlds</a>.
             <p>I'm also interested in the theory of software design, and I'm always striving to find ways to make it intuitive and to easily put it into practice.  As such, a lot of content on this site will endeavor to distil the theory down to easily applicable principles.
-            <p>Site developed and designed by me:
-                <a class="link" target="_blank" href="https://twitter.com/JohnBrunton">@johnbrunton</a>
+            <p>Follow me on Twitter <a class="link" target="_blank" href="https://twitter.com/JohnBrunton">@johnbrunton</a> or <a class="link" target="_blank" href="https://github.com/jbrunton/">GitHub</a>.
         </footer>
         
         <script type="text/javascript">

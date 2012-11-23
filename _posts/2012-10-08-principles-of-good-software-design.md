@@ -76,7 +76,7 @@ I'm currently of the opinion that there are three distinct causes of incidental 
 
 2. The programming problem at hand isn't being solved with the most appropriate "phrasing" (i.e. the choices of data structures, algorithms or language paradigm may have been poor; or the limitations of the language itself may be giving rise to incidental complexity).
 
-3. Multiple problems are being solved at once (in a single class or method) &mdash; i.e. subproblems of the problem are being solved in the same unit of code, adding significant background noise.
+3. Multiple problems are being solved at once (in a single class or method), adding significant background noise.  This is akin to violation of the [Single Responsibility Principle](http://en.wikipedia.org/wiki/Single_responsibility_principle) in OOP, but there's no reason not to adhere to this in other paradigms: it's always much easier to reason about one problem at a time.
 
 Any of these three will add obfuscation to the code, making it harder to reason about; they should all be avoided.
 
