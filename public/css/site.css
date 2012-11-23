@@ -32,7 +32,7 @@ a, a:active, a:link, a:visited, a:hover {
     text-decoration: none;
 }
 
-p {
+p, ul.posts {
     margin: 0 0 29px 0;
 }
 
