@@ -3,14 +3,16 @@ permalink: /blog/:year/:month/:day/:title
 tag_dir: /blog/tag
 markdown: rdiscount
 pygments: true
+exclude:
+    -   README.md
 
 nav_links:
     -
-        url: "/software-design.html"
+        url: "/software-design"
         label: "Software Design"
     -
-        url: "/software-testability.html"
-        label: "Software Testability"
+        url: "/testability"
+        label: "Testability"
     -
-        url: "/programming-languages.html"
+        url: "/programming-languages"
         label: "Programming Languages"
