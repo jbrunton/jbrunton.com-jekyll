@@ -25,7 +25,7 @@
                         <ul>
                         {% for link in site.nav_links %}
                             <li>
-                            {% if page.url == link.url %}
+                            {% if page.url == link.page_url %}
                                 <a class="selected" href="{{ link.url }}">{{ link.label }}</a>
                             {% else %}
                                 <a href="{{ link.url }}">{{ link.label }}</a>
